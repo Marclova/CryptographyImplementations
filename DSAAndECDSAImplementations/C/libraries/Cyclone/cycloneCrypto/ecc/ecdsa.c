@@ -394,9 +394,9 @@ error_t ecdsaReadSignature(const uint8_t *data, size_t length,
  * @return Error code
  **/
 
-__weak_func error_t ecdsaGenerateSignature(const PrngAlgo *prngAlgo, void *prngContext,
+/*__weak_func*/ error_t ecdsaGenerateSignature(const PrngAlgo *prngAlgo, void *prngContext,
    const EcDomainParameters *params, const EcPrivateKey *privateKey,
-   const uint8_t *digest, size_t digestLen, EcdsaSignature *signature)
+   const uint8_t *digest, size_t digestLen, EcdsaSignature *signature) //__weak_func tag removed by Cocilova Marco
 {
    error_t error;
    uint_t n;
@@ -504,9 +504,9 @@ end:
  * @return Error code
  **/
 
-__weak_func error_t ecdsaVerifySignature(const EcDomainParameters *params,
+/*__weak_func*/ error_t ecdsaVerifySignature(const EcDomainParameters *params, 
    const EcPublicKey *publicKey, const uint8_t *digest, size_t digestLen,
-   const EcdsaSignature *signature)
+   const EcdsaSignature *signature) //__weak_func tag removed by Cocilova Marco
 {
    error_t error;
    uint_t n;

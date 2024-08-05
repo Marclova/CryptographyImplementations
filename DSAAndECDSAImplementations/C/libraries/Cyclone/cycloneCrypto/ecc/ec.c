@@ -206,9 +206,9 @@ void ecFreePrivateKey(EcPrivateKey *key)
  * @return Error code
  **/
 
-__weak_func error_t ecGenerateKeyPair(const PrngAlgo *prngAlgo, void *prngContext,
+/*__weak_func*/ error_t ecGenerateKeyPair(const PrngAlgo *prngAlgo, void *prngContext,
    const EcDomainParameters *params, EcPrivateKey *privateKey,
-   EcPublicKey *publicKey)
+   EcPublicKey *publicKey) //__weak_func tag removed by Cocilova Marco
 {
    error_t error;
 
@@ -308,9 +308,106 @@ end:
  */
 error_t ecGenerateCurvePoint(const EcDomainParameters *params, const Mpi *x, EcPoint *r)
 {
+   Mpi usedX;
+   mpiInit(&usedX);
+   if(mpiComp(x, &params->p) != -1) //if x >= p
+   {
+      mpiMod(&usedX, x, &params->p);
+   }
+   else
+   {
+      mpiCopy(&usedX, x);
+   }
+   Mpi calculatedY;
+   mpiInit(&calculatedY);
 
+   //the formula to use is 'y = ( sqrt(x^3 + ax + b) ) in a limited field F(p)'
+
+   // //compute ax
+   // mpiMul(&calculatedY, &params->a, &usedX);
+   // //compute ax + b
+   // mpiAdd(&calculatedY, &calculatedY, &params->b);
+   // //compute x^3
+   // mpiMul(&usedX, &usedX, x);
+   // mpiMul(&usedX, &usedX, x);
+   // //compute x^3 + ax + b
+   // mpiAdd(&calculatedY, &usedX, &calculatedY);
+   // //compute ( sqrt(x^3 + ax + b) ) (mod p)
+   // error_t error = mpiSquareRoot(&calculatedY, &calculatedY);
+   //compute ax
+   mpiMulMod(&calculatedY, &params->a, &usedX, &params->p);
+   //compute ax + b
+   mpiAddMod(&calculatedY, &calculatedY, &params->b, &params->p);
+   //compute x^3
+   mpiMulMod(&usedX, &usedX, x, &params->p);
+   mpiMulMod(&usedX, &usedX, x, &params->p);
+   //compute x^3 + ax + b
+   mpiAddMod(&calculatedY, &usedX, &calculatedY, &params->p);
+   //compute sqrt(x^3 + ax + b)
+   error_t error = mpiSquareRoot(&calculatedY, &calculatedY); //no need to apply a modular reduction here
+
+   if(error == NO_ERROR)
+   {
+      mpiCopy(&r->x, x);
+      mpiCopy(&r->y, &calculatedY);
+      mpiSetValue(&r->z, 1);
+   }
+   else
+   {
+      ecFree(r);  // There's no such point with that 'x' coordinate in the curve
+      error = ERROR_NOT_FOUND;
+   }
+
+   mpiFree(&usedX);
+   mpiFree(&calculatedY);
+   return error;
 }
 
+/**
+ * @brief Not-official function created by Cocilova Marco
+ * @brief Calculates the grade of the given point.
+ * @param params The EcDomainParameters defining the curve
+ * @param a The EcPoint
+ * @param r The resulting point grade
+ * @return error code
+ */
+error_t ecCalculatePointOrder(const EcDomainParameters *params, const EcPoint *a, Mpi *r) //TODO ecCalculatePointGrade
+{
+   if(mpiCompInt(&a->z, 0) != 1) // check z == 0
+   {
+      mpiSetValue(r, 1); // already point to infinity
+      return NO_ERROR;
+   }
+
+   error_t error = NO_ERROR;
+   Mpi order;
+   mpiInit(&order);
+   mpiSetValue(&order, 2);
+   EcPoint appendPoint;
+   ecInit(&appendPoint);
+
+   ecDouble(params, &appendPoint, a); // double point (a + a)
+
+   while ( (mpiCompInt(&appendPoint.z, 0) == 1) && (mpiComp(&order, &params->p) != 0) ) // continue until point to infinity...
+   {                                                                                   // ...or until field module is reached
+      ecAdd(params, &appendPoint, &appendPoint, a); // add point p + a
+      mpiAddInt(&order, &order, 1); // increase point order
+   }
+
+   if((mpiComp(&order, &params->p) == -1)) // check if point order is lower then field module as expected
+   {
+      mpiCopy(r, &order);
+   }
+   else
+   {
+      mpiFree(r);
+      error = ERROR_ILLEGAL_PARAMETER; //probably there's a problem with the given point
+   }
+   
+   mpiFree(&order);
+   ecFree(&appendPoint);
+   return error;
+}
 
 /**
  * @brief Initialize elliptic curve point

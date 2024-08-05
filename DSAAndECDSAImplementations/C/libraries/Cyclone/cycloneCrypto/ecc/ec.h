@@ -133,8 +133,11 @@ error_t ecGeneratePrivateKey(const PrngAlgo *prngAlgo, void *prngContext,
 error_t ecGeneratePublicKey(const EcDomainParameters *params,
    const EcPrivateKey *privateKey, EcPublicKey *publicKey);
 
-   //function added by Cocilova Marco
-   error_t ecGenerateCurvePoint(const EcDomainParameters *params, const Mpi *x, EcPoint *r);
+//function added by Cocilova Marco
+error_t ecGenerateCurvePoint(const EcDomainParameters *params, const Mpi *x, EcPoint *r);
+
+//function added by Cocilova Marco
+error_t ecCalculatePointOrder(const EcDomainParameters *params, const EcPoint *a, Mpi *r);
 
 void ecInit(EcPoint *r);
 void ecFree(EcPoint *r);

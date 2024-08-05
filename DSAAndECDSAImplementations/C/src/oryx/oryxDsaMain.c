@@ -43,22 +43,16 @@ int main()
     dsaInitDomainParameters(&params);
     mpiSetValue(&params.p, DSA_PRIME_VALUE);
     mpiSetValue(&params.q, DSA_MODULE);
-    printf("Given public parameter 'p' value: %d\n", params.p.data[0]);
-    printf("Given public parameter 'q' value: %d\n", params.q.data[0]);
+    printf("Given public prime value 'p': %d\n", params.p.data[0]);
+    printf("Given public module 'q': %d\n", params.q.data[0]);
 
     Mpi h;
     mpiInit(&h);
     mpiSetValue(&h, ((rand() % (DSA_PRIME_VALUE-3)) + 2) );
-    printf("\nExtracted secret parameter 'h' value: %d\n", h.data[0]);
+    printf("\nExtracted secret parameter 'h': %d\n", h.data[0]);
 
     dsaGenerateGValue(&params.g, &params, &h);
-    printf("Generated public parameter 'g' value: %u\n", params.g.data[0]);
-
-    if(!dsaCheckDomainParameters(&params)) //TODO remove this check
-    {
-        printf("ERROR: Wrong parameters");
-        return -1;
-    }
+    printf("Generated public generator value 'g': %u\n", params.g.data[0]);
 
     printf("\n");
 
@@ -67,13 +61,13 @@ int main()
     dsaInitPrivateKey(&privK);
     dsaDomainParametersCopy(&privK.params, &params);
     mpiSetValue(&privK.x, DSA_PRIVATE_KEY_VALUE);
-    printf("Given private key 'x' value: %d\n", privK.x.data[0]);
+    printf("Given private key 'x': %d\n", privK.x.data[0]);
 
     // Generating the public key
     DsaPublicKey pubK;
     dsaInitPublicKey(&pubK);
     dsaGeneratePublicKey(&pubK, &privK);
-    printf("Generated public key 'y' value: %d\n", pubK.y.data[0]);
+    printf("Generated public key 'y': %d\n", pubK.y.data[0]);
 
     printf("\n");
 
@@ -102,7 +96,7 @@ int main()
     dsaFreeSignature(&sign);
 
 
-    /*--- sending buffered signature, the data and private key to the other person ---*/
+    printf("- simulating the sending of the buffered signature, the data and public key to the other person -\n\n");
 
     //reconverting the signature into a 'DsaSignature'
     DsaSignature receivedSignature;
@@ -119,12 +113,12 @@ int main()
     else
     {
         printf("Signature not recognised...\n");
-        printf("%d", error);
+        printf("error code: %d", error);
     }
     
 
     dsaFreeSignature(&receivedSignature);
     dsaFreePublicKey(&pubK);
     
-    return 1;
+    return (error == NO_ERROR) ? 1 : -1;
 }

@@ -76,13 +76,6 @@ typedef struct
 } DsaPrivateKey;
 
 
-// //struct added by Cocilova Marco
-// typedef struct {
-//     Mpi privateValue;  // private key value
-//     Mpi publicValue;  // public key value
-// } DsaKeyPair;
-
-
 /**
  * @brief DSA signature
  **/

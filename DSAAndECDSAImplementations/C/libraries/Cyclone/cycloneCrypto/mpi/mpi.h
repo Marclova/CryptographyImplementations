@@ -147,6 +147,11 @@ error_t mpiExpMod(Mpi *r, const Mpi *a, const Mpi *e, const Mpi *p);
 error_t mpiExpModFast(Mpi *r, const Mpi *a, const Mpi *e, const Mpi *p);
 error_t mpiExpModRegular(Mpi *r, const Mpi *a, const Mpi *e, const Mpi *p);
 
+//function added by Cocilova Marco
+error_t mpiSquareRoot(Mpi *r, const Mpi *a);
+// //function added by Cocilova Marco
+// bool_t mpiIsQuadraticResidue(const Mpi *a, const Mpi *p); //TODO valuate to delete
+
 error_t mpiMontgomeryMul(Mpi *r, const Mpi *a, const Mpi *b, uint_t k,
    const Mpi *p, Mpi *t);
 

@@ -1869,6 +1869,88 @@ end:
    return mpiExpMod(r, a, e, p);
 }
 
+/**
+ * @brief Not-official function added by Cocilova Marco
+ * @brief Calculates the square root
+ * @param r The Mpi result rounded down
+ * @param a The Mpi number to extract the square root from.
+ * @return error code
+ */
+error_t mpiSquareRoot(Mpi *r, const Mpi *a)
+{
+   if(a->sign == -1) //check if is negative
+   {
+      return ERROR_ILLEGAL_PARAMETER;
+   }
+
+   error_t error = NO_ERROR;
+   Mpi appendV;
+   mpiInit(&appendV);
+   Mpi v;
+   mpiInit(&v);
+   mpiSetValue(&v, 1);
+   Mpi previousV;
+   mpiInit(&previousV);
+   mpiSetValue(&previousV, 0);
+
+   while (mpiComp(&v, &previousV) != 0)
+   {
+      //set previous value
+      mpiCopy(&previousV, &v);
+      //calculate v = (v + n / v) / 2
+      //appendValue = n / v
+      mpiDiv(&appendV, (Mpi *)NULL, a, &v);
+      //v = v + appendValue
+      mpiAdd(&v, &v, &appendV);
+      // v /= 2
+      mpiDivInt(&v, (Mpi *)NULL, &v, 2);
+   }
+
+   mpiMul(&appendV, &v, &v); //check if the result is correct
+   if(mpiComp(&appendV, a) == 0)
+   {
+      mpiCopy(r, &v);
+   }
+   else
+   {
+      error = ERROR_ILLEGAL_PARAMETER;
+      mpiFree(r);
+   }
+
+   mpiFree(&appendV);
+   mpiFree(&v);
+   mpiFree(&previousV);
+   return error;
+}
+
+//TODO valuate to delete
+// /**
+//  * @brief Not-official function added by Cocilova Marco
+//  * @brief Checks if the value is a quadratic residue
+//  * @param a The Mpi number to check.
+//  * @param p The Mpi module.
+//  * @return The check result.
+//  */
+// bool_t mpiIsQuadraticResidue(const Mpi *a, const Mpi *p) //IT DOESN'T WORK How I Planned!!!
+// {
+//    bool_t flag;
+//    Mpi legendre;
+//    mpiInit(&legendre); //If the legendre number is equal to 1, then exists a k so that k^2 = a
+//    Mpi exp;
+//    mpiInit(&exp);
+//    // exp = (p-1)/2 //(with p = 3) because the Eulero principle works with any prime number as module
+//    // mpiSetValue(&exp, 1);
+//    mpiSubInt(&exp, p, 1);
+//    mpiDivInt(&exp, (Mpi *)NULL, &exp, 2);
+
+//    mpiExpMod(&legendre, a, &exp, p);
+//    flag = (mpiCompInt(&legendre, 1) == 0);
+
+//    mpiFree(&legendre);
+//    mpiFree(&exp);
+//    return flag;
+// }
+
 
 /**
  * @brief Montgomery multiplication

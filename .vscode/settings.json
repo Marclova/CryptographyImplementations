@@ -45,7 +45,9 @@
         "rsa.h": "c",
         "curve25519.h": "c",
         "hash_algorithms.h": "c",
-        "curve448.h": "c"
+        "curve448.h": "c",
+        "pic32cx_bz_crypto.h": "c",
+        "pic32cx_bz_crypto_pkc.h": "c"
     },
     "cSpell.words": [
         "Affinify",
