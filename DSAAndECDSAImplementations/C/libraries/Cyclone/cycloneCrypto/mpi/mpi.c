@@ -1923,35 +1923,6 @@ error_t mpiSquareRoot(Mpi *r, const Mpi *a)
    return error;
 }
 
-//TODO valuate to delete
-// /**
-//  * @brief Not-official function added by Cocilova Marco
-//  * @brief Checks if the value is a quadratic residue
-//  * @param a The Mpi number to check.
-//  * @param p The Mpi module.
-//  * @return The check result.
-//  */
-// bool_t mpiIsQuadraticResidue(const Mpi *a, const Mpi *p) //IT DOESN'T WORK How I Planned!!!
-// {
-//    bool_t flag;
-//    Mpi legendre;
-//    mpiInit(&legendre); //If the legendre number is equal to 1, then exists a k so that k^2 = a
-//    Mpi exp;
-//    mpiInit(&exp);
-//    // exp = (p-1)/2 //(with p = 3) because the Eulero principle works with any prime number as module
-//    // mpiSetValue(&exp, 1);
-//    mpiSubInt(&exp, p, 1);
-//    mpiDivInt(&exp, (Mpi *)NULL, &exp, 2);
-
-//    mpiExpMod(&legendre, a, &exp, p);
-//    flag = (mpiCompInt(&legendre, 1) == 0);
-
-//    mpiFree(&legendre);
-//    mpiFree(&exp);
-//    return flag;
-// }
-
-
 /**
  * @brief Montgomery multiplication
  * @param[out] r Resulting integer R = A * B / 2^k mod P

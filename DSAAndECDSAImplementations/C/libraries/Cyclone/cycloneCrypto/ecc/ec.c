@@ -371,7 +371,7 @@ error_t ecGenerateCurvePoint(const EcDomainParameters *params, const Mpi *x, EcP
  * @param r The resulting point grade
  * @return error code
  */
-error_t ecCalculatePointOrder(const EcDomainParameters *params, const EcPoint *a, Mpi *r) //TODO ecCalculatePointGrade
+error_t ecCalculatePointOrder(const EcDomainParameters *params, const EcPoint *a, Mpi *r)
 {
    if(mpiCompInt(&a->z, 0) != 1) // check z == 0
    {
