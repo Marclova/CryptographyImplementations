@@ -10,6 +10,9 @@
                 
                 "-g",
                 "${file}",
+                "${workspaceFolder}/DSAAndECDSAImplementations/C/libraries/not_official_inludes/self-implemented/shaMessageDigest.c",
+                "${workspaceFolder}/DSAAndECDSAImplementations/C/libraries/not_official_inludes/self-implemented/yarrowPRNG.c",
+
                 "${workspaceFolder}/DSAAndECDSAImplementations/C/libraries/Cyclone/cycloneCrypto/pkc/dsa.c",
 
                 "${workspaceFolder}/DSAAndECDSAImplementations/C/libraries/Cyclone/cycloneCrypto/ecc/ecdsa.c",

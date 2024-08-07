@@ -47,7 +47,8 @@
         "hash_algorithms.h": "c",
         "curve448.h": "c",
         "pic32cx_bz_crypto.h": "c",
-        "pic32cx_bz_crypto_pkc.h": "c"
+        "pic32cx_bz_crypto_pkc.h": "c",
+        "shamessagedigest.h": "c"
     },
     "cSpell.words": [
         "Affinify",

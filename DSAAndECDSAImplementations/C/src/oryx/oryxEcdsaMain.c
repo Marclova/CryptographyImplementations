@@ -1,43 +1,28 @@
 #include <stdio.h>
-#include <time.h>
 #include <Cyclone\cycloneCrypto\ecc\ecdsa.h>
 #include <Cyclone\cycloneCrypto\rng\yarrow.h>
+#include <not_official_inludes\self-implemented\yarrowPRNG.h>
+#include <not_official_inludes\self-implemented\shaMessageDigest.h>
 
 #define SEED_LENGTH 32  //seed length for sha256
 
 //low sample values
+#define MAX_ATTEMPTS_TO_GENERATE_SIGNATURE 5
+
 #define FIELD_LIMIT 107
 #define A_VARIABLE 7
 #define B_VARIABLE 17
 #define G_POINT_X_COORDINATE 20
-#define MAX_ATTEMPTS_TO_GENERATE_SIGNATURE 5
+
+#define FILE_TO_SIGN "hello world!"
 
 int main()
 {
     printf("\n");
-    // data sample
-    const uint8_t data[] = "hello world!";
-    // Initialization of the native number generator
-    srand(time(NULL));
 
-    // Initializing the sha256 cipher and calculating the data digest
-    Sha256Context sha256;
-    sha256Init(&sha256);
-    sha256Update(&sha256, &data, sizeof(data));
-    uint8_t digest[SHA256_DIGEST_SIZE];
-    sha256Final(&sha256, digest);
-
-    // Initializing 'PrngAlgo' and 'YarrowContext' as components for a simple pseudo-random number generator
-    const PrngAlgo *prngAlgo = &yarrowPrngAlgo;
-
+    //initialize the Pseudo-Random-Number-Generator
     YarrowContext yContext;
-    yarrowInit(&yContext);
-    uint8_t seed[SEED_LENGTH];
-    for (size_t i = 0; i < sizeof(seed); i++) // this seed generation method is not secure
-    {
-        seed[i] = (rand()) % 255;
-    }
-    yarrowSeed(&yContext, seed, sizeof(seed));
+    yarrowGenerateSha256PRSeed(&yContext);
 
     //initialize parameters
     EcDomainParameters params;
@@ -62,13 +47,15 @@ int main()
     ecInitPrivateKey(&privK);
     EcPublicKey pubK;
     ecInitPublicKey(&pubK);
-    ecGenerateKeyPair(prngAlgo, &yContext, &params, &privK, &pubK);
+    ecGenerateKeyPair(&yarrowPrngAlgo, &yContext, &params, &privK, &pubK);
     printf("Extracted private key 'd': %d\n", privK.d.data[0]);
     printf("Generated public key 'Q' (x,y): ( %d , %d )\n", pubK.q.x.data[0], pubK.q.y.data[0]);
 
     printf("\n");
 
     //generate signature
+    uint8_t digest[SHA256_DIGEST_SIZE];
+    sha256DigestData(digest, FILE_TO_SIGN);
     EcdsaSignature sign;
     ecdsaInitSignature(&sign);
     error_t error; // necessary to loop attempts
@@ -76,7 +63,7 @@ int main()
     //sometimes the extracted 'k' value is unfit, so it is necessary to retry.
     while (error != NO_ERROR || i >= MAX_ATTEMPTS_TO_GENERATE_SIGNATURE)
     {
-        error = ecdsaGenerateSignature(prngAlgo, &yContext, &params, &privK, digest, sizeof(digest), &sign);
+        error = ecdsaGenerateSignature(&yarrowPrngAlgo, &yContext, &params, &privK, digest, sizeof(digest), &sign);
         i++;
     }
     printf("Generated signature (r,s): ( %d , %d )\n", sign.r.data[0], sign.s.data[0]);

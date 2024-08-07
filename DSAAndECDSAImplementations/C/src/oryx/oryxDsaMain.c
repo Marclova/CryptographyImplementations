@@ -1,42 +1,21 @@
 #include <stdio.h>
-#include <time.h>
 #include <Cyclone\cycloneCrypto\pkc\dsa.h>
-#include <Cyclone\cycloneCrypto\rng\yarrow.h>
-
-#define SEED_LENGTH 32 //seed length for sha256
+#include <not_official_inludes\self-implemented\yarrowPRNG.h>
+#include <not_official_inludes\self-implemented\shaMessageDigest.h>
 
 //low sample values
 #define DSA_PRIME_VALUE 107
 #define DSA_MODULE 53
 #define DSA_PRIVATE_KEY_VALUE 34
+#define FILE_TO_SIGN "hello world!"
 
 int main()
 {   
     printf("\n");
-    // data sample
-    const uint8_t data[] = "hello world!";
-    // Initialization of the native number generator
-    srand(time(NULL));
 
-
-    // Initializing the sha256 cipher and calculating the data digest
-    Sha256Context sha256;
-    sha256Init(&sha256);
-    sha256Update(&sha256, &data, sizeof(data));
-    uint8_t digest[SHA256_DIGEST_SIZE];
-    sha256Final(&sha256, digest);
-
-    // Initializing 'PrngAlgo' and 'YarrowContext' as components for a simple pseudo-random number generator
-    const PrngAlgo *prngAlgo = &yarrowPrngAlgo;
-
+    //initialize the Pseudo-Random-Number-Generator
     YarrowContext yContext;
-    yarrowInit(&yContext);
-    uint8_t seed[SEED_LENGTH];
-    for (size_t i = 0; i < sizeof(seed); i++) // this seed generation method is not secure
-    {
-        seed[i] = (rand()) % 255;
-    }
-    yarrowSeed(&yContext, seed, sizeof(seed));
+    yarrowGenerateSha256PRSeed(&yContext);
 
     // Initialing the DSA variables 'p', 'q', 'h', and 'g'
     DsaDomainParameters params;
@@ -72,9 +51,11 @@ int main()
     printf("\n");
 
     // Signing the given data
+    uint8_t digest[SHA256_DIGEST_SIZE];
+    sha256DigestData(digest, FILE_TO_SIGN);
     DsaSignature sign;
     dsaInitSignature(&sign);
-    dsaGenerateSignature(prngAlgo, &yContext, &privK, digest, sizeof(digest), &sign);
+    dsaGenerateSignature(&yarrowPrngAlgo, &yContext, &privK, digest, sizeof(digest), &sign);
     printf("Generated signature (r,s): (%u , %u)", sign.r.data[0], sign.s.data[0]);
 
     printf("\n");
