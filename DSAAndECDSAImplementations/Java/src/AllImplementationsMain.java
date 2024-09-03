@@ -61,26 +61,23 @@ public class AllImplementationsMain {
         String hashAlgorithmName;
         AlgorithmParameterSpec parameters;
         
-
-        //settings for DSA
-        if (KeyPairGeneratorAlgorithmName.equals("DSA"))
-        {
-            hashAlgorithmName = "SHA256withDSA";
-            BigInteger pValue = new BigInteger("131822006398165307258698055648413838687537767524671193922764733867799989387302018959074876252007822537180273324347375075132156773521963609412383460404934049365190601904571108395361576354462976935366413513250177554222238270271204765747908939012743527162703702046780423745988560805648320815268994567009996144811");
-            BigInteger qValue = new BigInteger("859374346742477646223583445091564221150206800453");
-            parameters = new DSAParametersCalculator()
-                            .calculateGValueAndUpdate(new DSAParameterSpec(pValue, qValue, null), srg);
-        }
-        //settings for ECDSA
-        else if (KeyPairGeneratorAlgorithmName.equals("EC"))
-        {
-            hashAlgorithmName = "SHA256withECDSA";
-            parameters = new ECGenParameterSpec("secp256r1");
-            // parameters = new ECParametersCalculator().calculateGValueAndUpdate((ECParameterSpec)parameters, srg);
-        }
-        else
-        {
-            throw new NoSuchAlgorithmException("The selected algorithm "+KeyPairGeneratorAlgorithmName+" is not between the options");
+        switch (KeyPairGeneratorAlgorithmName) {
+            case "DSA":  //settings for DSA
+                hashAlgorithmName = "SHA256withDSA";
+                BigInteger pValue = new BigInteger("131822006398165307258698055648413838687537767524671193922764733867799989387302018959074876252007822537180273324347375075132156773521963609412383460404934049365190601904571108395361576354462976935366413513250177554222238270271204765747908939012743527162703702046780423745988560805648320815268994567009996144811");
+                BigInteger qValue = new BigInteger("859374346742477646223583445091564221150206800453");
+                parameters = new DSAParametersCalculator()
+                                .calculateGValueAndUpdate(new DSAParameterSpec(pValue, qValue, null), srg);
+                break;
+        
+            case "EC":  //settings for ECDSA
+                hashAlgorithmName = "SHA256withECDSA";
+                parameters = new ECGenParameterSpec("secp256r1");
+                // parameters = new ECParametersCalculator().calculateGValueAndUpdate((ECParameterSpec)parameters, srg);
+                break;
+            
+            default:
+                throw new NoSuchAlgorithmException("The selected algorithm "+KeyPairGeneratorAlgorithmName+" is not between the options");
         }
 
         System.out.println("signature algorithm choose: " + KeyPairGeneratorAlgorithmName);
