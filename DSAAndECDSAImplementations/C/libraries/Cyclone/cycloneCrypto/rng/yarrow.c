@@ -36,6 +36,8 @@
 #include <Cyclone\cycloneCrypto\rng\yarrow.h> //"rng/yarrow.h"
 #include <Cyclone\common\debug.h> //"debug.h"
 
+#include <time.h> //dependency added by Cocilova Marco
+
 //Check crypto library configuration
 #if (YARROW_SUPPORT == ENABLED)
 
@@ -382,6 +384,22 @@ void yarrowDeinit(YarrowContext *context)
 
    //Clear PRNG state
    osMemset(context, 0, sizeof(YarrowContext));
+}
+
+/**
+ * @brief Not Official function added by Cocilova Marco
+ * @brief A simple seed generator and setter for a yarrowContext.
+ * @param context The YarrowContext to set.
+ */
+void yarrowSetSimpleTimePRSeed(YarrowContext *context)
+{
+    srand(time(NULL));
+    uint8_t seed[SHA256_DIGEST_SIZE];
+    for (size_t i = 0; i < sizeof(seed); i++) // this seed generation method is not secure
+    {
+        seed[i] = (rand()) % 255;
+    }
+    yarrowSeed(context, seed, sizeof(seed));
 }
 
 #endif

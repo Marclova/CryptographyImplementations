@@ -1,7 +1,32 @@
+/*
+ * MIT License
+ * 
+ * Copyright (c) 2024 Cocilova Marco
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 #include <stdio.h>
 #include <Cyclone\cycloneCrypto\pkc\dsa.h>
-#include <not_official_inludes\self-implemented\yarrowPRNG.h>
-#include <not_official_inludes\self-implemented\shaMessageDigest.h>
+#include <Cyclone\cycloneCrypto\rng\yarrow.h>
+// #include <not_official_inludes\self-implemented\yarrowPRNG.h>
+// #include <not_official_inludes\self-implemented\shaMessageDigest.h>
 
 //low sample values
 #define DSA_PRIME_VALUE 107
@@ -15,7 +40,8 @@ int main()
 
     //initialize the Pseudo-Random-Number-Generator
     YarrowContext yContext;
-    yarrowGenerateSha256PRSeed(&yContext);
+    yarrowInit(&yContext);
+    yarrowSetSimpleTimePRSeed(&yContext);
 
     // Initialing the DSA variables 'p', 'q', 'h', and 'g'
     DsaDomainParameters params;
@@ -52,7 +78,7 @@ int main()
 
     // Signing the given data
     uint8_t digest[SHA256_DIGEST_SIZE];
-    sha256DigestData(digest, FILE_TO_SIGN);
+    sha256Compute(FILE_TO_SIGN, sizeof(digest), digest);
     DsaSignature sign;
     dsaInitSignature(&sign);
     dsaGenerateSignature(&yarrowPrngAlgo, &yContext, &privK, digest, sizeof(digest), &sign);
@@ -63,7 +89,7 @@ int main()
     //Converting the signature into a more agile format (such as an uint8_t array)
     uint8_t buffer[sizeof(&params.q.data)];
     size_t bufferSize = sizeof(buffer);
-    dsaWriteSignature(&sign, buffer, &bufferSize);
+    dsaWriteSignature(&sign, buffer, &bufferSize);  //cant use 'sizeof(buffer)' here because a pointer is required
     printf("Sent signature value (hex): ");
     for (size_t i = 0; i < sizeof(buffer); i++)
     {
@@ -100,6 +126,7 @@ int main()
 
     dsaFreeSignature(&receivedSignature);
     dsaFreePublicKey(&pubK);
+    yarrowDeinit(&yContext);
     
     return (error == NO_ERROR) ? 1 : -1;
 }

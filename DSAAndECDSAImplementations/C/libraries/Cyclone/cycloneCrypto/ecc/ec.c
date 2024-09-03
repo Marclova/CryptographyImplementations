@@ -322,18 +322,6 @@ error_t ecGenerateCurvePoint(const EcDomainParameters *params, const Mpi *x, EcP
    mpiInit(&calculatedY);
 
    //the formula to use is 'y = ( sqrt(x^3 + ax + b) ) in a limited field F(p)'
-
-   // //compute ax
-   // mpiMul(&calculatedY, &params->a, &usedX);
-   // //compute ax + b
-   // mpiAdd(&calculatedY, &calculatedY, &params->b);
-   // //compute x^3
-   // mpiMul(&usedX, &usedX, x);
-   // mpiMul(&usedX, &usedX, x);
-   // //compute x^3 + ax + b
-   // mpiAdd(&calculatedY, &usedX, &calculatedY);
-   // //compute ( sqrt(x^3 + ax + b) ) (mod p)
-   // error_t error = mpiSquareRoot(&calculatedY, &calculatedY);
    //compute ax
    mpiMulMod(&calculatedY, &params->a, &usedX, &params->p);
    //compute ax + b

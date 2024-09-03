@@ -1883,7 +1883,14 @@ error_t mpiSquareRoot(Mpi *r, const Mpi *a)
       return ERROR_ILLEGAL_PARAMETER;
    }
 
+   Mpi softLockLimit; //used to detect an infinite loop
+   mpiInit(&softLockLimit);
+   mpiDivInt(&softLockLimit, NULL, a, 2);
+   Mpi i;
+   mpiInit(&i);
+   mpiSetValue(&i, 0);
    error_t error = NO_ERROR;
+
    Mpi appendV;
    mpiInit(&appendV);
    Mpi v;
@@ -1904,6 +1911,12 @@ error_t mpiSquareRoot(Mpi *r, const Mpi *a)
       mpiAdd(&v, &v, &appendV);
       // v /= 2
       mpiDivInt(&v, (Mpi *)NULL, &v, 2);
+      
+      if(mpiComp(&i, &softLockLimit) == 1)
+      {
+         return ERROR_ABORTED; //infinite loop detected
+      }
+      mpiAddInt(&i, &i, 1);
    }
 
    mpiMul(&appendV, &v, &v); //check if the result is correct
@@ -1913,7 +1926,7 @@ error_t mpiSquareRoot(Mpi *r, const Mpi *a)
    }
    else
    {
-      error = ERROR_ILLEGAL_PARAMETER;
+      error = ERROR_FAILURE;
       mpiFree(r);
    }
 

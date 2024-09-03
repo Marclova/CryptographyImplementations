@@ -95,6 +95,9 @@ void yarrowSlowReseed(YarrowContext *context);
 
 void yarrowDeinit(YarrowContext *context);
 
+//function added by Cocilova Marco
+void yarrowSetSimpleTimePRSeed(YarrowContext *r);
+
 //C++ guard
 #ifdef __cplusplus
 }
