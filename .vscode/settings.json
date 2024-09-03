@@ -48,10 +48,13 @@
         "curve448.h": "c",
         "pic32cx_bz_crypto.h": "c",
         "pic32cx_bz_crypto_pkc.h": "c",
-        "shamessagedigest.h": "c"
+        "shamessagedigest.h": "c",
+        "yarrowprng.h": "c"
     },
     "cSpell.words": [
         "Affinify",
-        "Projectify"
+        "endregion",
+        "Projectify",
+        "secp"
     ]
 }

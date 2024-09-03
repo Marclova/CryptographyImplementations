@@ -10,8 +10,8 @@
                 
                 "-g",
                 "${file}",
-                "${workspaceFolder}/DSAAndECDSAImplementations/C/libraries/not_official_inludes/self-implemented/shaMessageDigest.c",
-                "${workspaceFolder}/DSAAndECDSAImplementations/C/libraries/not_official_inludes/self-implemented/yarrowPRNG.c",
+                // "${workspaceFolder}/DSAAndECDSAImplementations/C/libraries/not_official_inludes/self-implemented/shaMessageDigest.c",
+                // "${workspaceFolder}/DSAAndECDSAImplementations/C/libraries/not_official_inludes/self-implemented/yarrowPRNG.c",
 
                 "${workspaceFolder}/DSAAndECDSAImplementations/C/libraries/Cyclone/cycloneCrypto/pkc/dsa.c",
 
@@ -20,11 +20,11 @@
                 "${workspaceFolder}/DSAAndECDSAImplementations/C/libraries/Cyclone/cycloneCrypto/hardware/m460/m460_crypto_pkc.c",
 
                 "${workspaceFolder}/DSAAndECDSAImplementations/C/libraries/Cyclone/cycloneCrypto/mpi/mpi.c",
-                "${workspaceFolder}/DSAAndECDSAImplementations/C/libraries/Cyclone/cycloneCrypto/encoding/asn1.c",
-                "${workspaceFolder}/DSAAndECDSAImplementations/C/libraries/Cyclone/cycloneCrypto/encoding/oid.c",
                 "${workspaceFolder}/DSAAndECDSAImplementations/C/libraries/Cyclone/cycloneCrypto/rng/yarrow.c",
                 "${workspaceFolder}/DSAAndECDSAImplementations/C/libraries/Cyclone/cycloneCrypto/hash/sha256.c",
                 "${workspaceFolder}/DSAAndECDSAImplementations/C/libraries/Cyclone/cycloneCrypto/cipher/aes.c",
+                "${workspaceFolder}/DSAAndECDSAImplementations/C/libraries/Cyclone/cycloneCrypto/encoding/asn1.c",
+                "${workspaceFolder}/DSAAndECDSAImplementations/C/libraries/Cyclone/cycloneCrypto/encoding/oid.c",
                 "${workspaceFolder}/DSAAndECDSAImplementations/C/libraries/Cyclone/common/cpu_endian.c",
                 "-o",
                 "${fileDirname}//${fileBasenameNoExtension}.exe"

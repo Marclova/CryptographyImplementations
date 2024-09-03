@@ -1,4 +1,29 @@
+/*
+ * MIT License
+ * 
+ * Copyright (c) 2024 Cocilova Marco
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 package DSAAndECDSAImplementations.Java.src;
+
 import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -13,25 +38,27 @@ import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.DSAParameterSpec;
 import java.security.spec.ECGenParameterSpec;
 // import java.security.spec.ECParameterSpec;
-import java.security.spec.InvalidKeySpecException;
+
+
 
 import DSAAndECDSAImplementations.Java.libraries.parameters_calculation.SecureRandomGenerator;
 import DSAAndECDSAImplementations.Java.libraries.parameters_calculation.DSAParametersCalculator;
 
 public class AllImplementationsMain {
     public static void main(String[] args)
-        throws NoSuchAlgorithmException, InvalidKeyException, SignatureException, InvalidAlgorithmParameterException, InvalidKeySpecException {
+        throws NoSuchAlgorithmException, InvalidAlgorithmParameterException, InvalidKeyException, SignatureException {
 
         System.out.println();
 
         //Defining initial values
         byte[] FileToSign = "Hello World!".getBytes();
-        
+        SecureRandomGenerator srg = new SecureRandomGenerator();
+
+        //Choose one of those algorithms
         String KeyPairGeneratorAlgorithmName = "EC";
         // String KeyPairGeneratorAlgorithmName = "DSA";
-        String hashAlgorithmName;
         
-        SecureRandomGenerator srg = new SecureRandomGenerator();
+        String hashAlgorithmName;
         AlgorithmParameterSpec parameters;
         
 
@@ -57,10 +84,7 @@ public class AllImplementationsMain {
         }
 
         System.out.println("signature algorithm choose: " + KeyPairGeneratorAlgorithmName);
-        // System.out.println("p:\n" + parameters.getP().toString(10));
-        // System.out.println("q:\n" + parameters.getQ().toString(10));
-        // System.out.println("g:\n" + parameters.getG().toString(10));
-        // System.out.println("extracted private key value: " + privateKeyValue);
+        System.out.println("parameters:\n" + parameters);
         System.out.println();
 
         //extraction of the private key and generation of the public key
