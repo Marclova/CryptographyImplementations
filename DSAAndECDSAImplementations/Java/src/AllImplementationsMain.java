@@ -42,12 +42,14 @@ import java.security.spec.ECGenParameterSpec;
 
 
 import DSAAndECDSAImplementations.Java.libraries.parameters_calculation.SecureRandomGenerator;
+import DSAAndECDSAImplementations.Java.libraries.minorUtilities.CustomConsolePrinter;
 import DSAAndECDSAImplementations.Java.libraries.parameters_calculation.DSAParametersCalculator;
 
 public class AllImplementationsMain {
     public static void main(String[] args)
         throws NoSuchAlgorithmException, InvalidAlgorithmParameterException, InvalidKeyException, SignatureException {
 
+        CustomConsolePrinter cPrinter = new CustomConsolePrinter();
         System.out.println();
 
         //Defining initial values
@@ -91,8 +93,10 @@ public class AllImplementationsMain {
         PrivateKey privK = kPair.getPrivate();
         PublicKey pubK = kPair.getPublic();
 
-        System.out.println("extracted private key value:\n" + privK.getEncoded());
-        System.out.println("extracted public key value:\n" + pubK.getEncoded());
+        System.out.println("given private key value:");
+        cPrinter.printBytes(privK.getEncoded());
+        System.out.println("given public key value:");
+        cPrinter.printBytes(pubK.getEncoded());
         System.out.println();
 
         //application of the file signature
@@ -101,7 +105,8 @@ public class AllImplementationsMain {
         sign.update(FileToSign);
         byte[] generatedSignature = sign.sign();
         
-        System.out.println("generated signature: "+generatedSignature);
+        System.out.println("generated signature: ");
+        cPrinter.printBytes(generatedSignature);
 
         //verification of the file signature
         Signature verify = Signature.getInstance(hashAlgorithmName);

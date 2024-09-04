@@ -24,6 +24,45 @@
 
 package DSAAndECDSAImplementations.Java.libraries.minorUtilities;
 
-public class PrettyPrinter {
-    //TODO PrettyPrinter
+public class CustomConsolePrinter
+{
+    public void printBytes(byte[] bytes)
+    {
+        if (bytes.length > 8)
+        {
+            this.printBytesAsHex(bytes);
+        }
+        else
+        {
+            this.printBytesAsDecimal(bytes);
+        }
+    }
+    
+    public void printBytesAsHex(byte[] bytes)
+    {
+        System.out.print(String.format("%02X", bytes[0] & 0xFF));
+
+        for (int i = 1; i < bytes.length; i++)
+        {
+            System.out.print(" ");
+            System.out.print(String.format("%02X", bytes[i] & 0xFF));
+        }
+        System.out.println();
+    }
+
+    public void printBytesAsDecimal(byte[] bytes)
+    {
+        if (bytes.length > 8)
+        {
+            throw new IllegalArgumentException("Value too high");    
+        }
+
+        long value = 0;
+        for (int i = 0; i < bytes.length; i++) {
+            value <<= 8;
+            value |= (bytes[i] & 0xFF);
+        }
+
+        System.out.println(value);
+    }
 }
