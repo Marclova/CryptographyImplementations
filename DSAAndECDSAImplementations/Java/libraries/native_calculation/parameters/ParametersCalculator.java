@@ -22,20 +22,39 @@
  * SOFTWARE.
  */
 
-package DSAAndECDSAImplementations.Java.libraries.parameters_calculation;
+package DSAAndECDSAImplementations.Java.libraries.native_calculation.parameters;
 
 import java.security.spec.AlgorithmParameterSpec;
+import java.security.spec.KeySpec;
 
-public abstract class ParametersCalculator<A extends AlgorithmParameterSpec> {
+import DSAAndECDSAImplementations.Java.libraries.native_calculation.SecureRandomGenerator;
+
+public abstract class ParametersCalculator {
 
     /**
      * Generates and sets the 'g' value used for digital signature and returns the new parameters spec.
      * The inserted parameter spec must have all the parameters but the initial value of 'g' will be ignored (so 'g' may be null).
-     * note: This method does't return the result because it's not always representable by a single value.
      * 
      * @param params The parameters spec containing the necessary parameters.
      * @param srg The secure pseudo-random generator.
-     * @return A new parameter spec containing the calculated 'g' value
+     * @return The calculated 'g' value which type depends from the used implementation
      */
-    public abstract A calculateGValueAndUpdate(A params, SecureRandomGenerator srg);
+    public abstract Object calculateGValue(AlgorithmParameterSpec params, SecureRandomGenerator srg);
+
+    /**
+     * Calculates the public key
+     * 
+     * @param privateKey The private key associated with the public key to create
+     * @param params The AlgorithmParameterSpec parameters used to calculate the public key
+     * @return The public key which type depends from the used implementation
+     */
+    public abstract KeySpec calculatePublicKey(KeySpec privateKey, AlgorithmParameterSpec params);
+
+    // /**
+    //  * 
+    //  * 
+    //  * @param params
+    //  * @return
+    //  */
+    // public abstract ParameterSpecProvider extractValuesFromParameterSpec(AlgorithmParameterSpec params);
 }

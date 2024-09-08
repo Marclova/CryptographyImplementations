@@ -24,33 +24,34 @@
 
 package DSAAndECDSAImplementations.Java.libraries.minorUtilities;
 
-public class CustomConsolePrinter
+public class BytesConsolePrinter
 {
-    public void printBytes(byte[] bytes)
+    public String byteArrayToString(byte[] bytes)
     {
         if (bytes.length > 8)
         {
-            this.printBytesAsHex(bytes);
+            return this.byteArrayToStringAsHex(bytes);
         }
-        else
-        {
-            this.printBytesAsDecimal(bytes);
-        }
+        
+        return this.byteArrayToStringAsDecimal(bytes);
     }
     
-    public void printBytesAsHex(byte[] bytes)
+    public String byteArrayToStringAsHex(byte[] bytes)
     {
-        System.out.print(String.format("%02X", bytes[0] & 0xFF));
+        String result = new String();
+
+        result += String.format("%02X", bytes[0] & 0xFF);
 
         for (int i = 1; i < bytes.length; i++)
         {
-            System.out.print(" ");
-            System.out.print(String.format("%02X", bytes[i] & 0xFF));
+            result += " " + String.format("%02X", bytes[i] & 0xFF);
         }
-        System.out.println();
+        result += "\n";
+
+        return result;
     }
 
-    public void printBytesAsDecimal(byte[] bytes)
+    public String byteArrayToStringAsDecimal(byte[] bytes)
     {
         if (bytes.length > 8)
         {
@@ -63,6 +64,6 @@ public class CustomConsolePrinter
             value |= (bytes[i] & 0xFF);
         }
 
-        System.out.println(value);
+        return (""+value);
     }
 }
