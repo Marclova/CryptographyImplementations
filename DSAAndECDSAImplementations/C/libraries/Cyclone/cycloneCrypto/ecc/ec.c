@@ -361,10 +361,21 @@ error_t ecGenerateCurvePoint(const EcDomainParameters *params, const Mpi *x, EcP
  */
 error_t ecCalculatePointOrder(const EcDomainParameters *params, const EcPoint *a, Mpi *r)
 {
-   if(mpiCompInt(&a->z, 0) != 1) // check z == 0
+   EcPoint point;
+   ecInit(&point);
+   ecCopy(&point, a);
+
+   if (point.z.data != NULL)
    {
-      mpiSetValue(r, 1); // already point to infinity
-      return NO_ERROR;
+      mpiSetValue(&point.z, 1); //this point is not a result of an addiction or a double
+   }
+   else
+   {
+      if(mpiCompInt(&point.z, 0) != 1)  // if (z <= 0)
+      {
+         mpiSetValue(r, 1); // this point is already point to infinity
+         return NO_ERROR;
+      }
    }
 
    error_t error = NO_ERROR;
@@ -374,11 +385,11 @@ error_t ecCalculatePointOrder(const EcDomainParameters *params, const EcPoint *a
    EcPoint appendPoint;
    ecInit(&appendPoint);
 
-   ecDouble(params, &appendPoint, a); // double point (a + a)
+   ecDouble(params, &appendPoint, &point); // double point (a + a)
 
    while ( (mpiCompInt(&appendPoint.z, 0) == 1) && (mpiComp(&order, &params->p) != 0) ) // continue until point to infinity...
    {                                                                                   // ...or until field module is reached
-      ecAdd(params, &appendPoint, &appendPoint, a); // add point p + a
+      ecAdd(params, &appendPoint, &appendPoint, &point); // add point p + a
       mpiAddInt(&order, &order, 1); // increase point order
    }
 
@@ -388,10 +399,11 @@ error_t ecCalculatePointOrder(const EcDomainParameters *params, const EcPoint *a
    }
    else
    {
-      mpiFree(r);
+      // mpiFree(r);
       error = ERROR_ILLEGAL_PARAMETER; //probably there's a problem with the given point
    }
    
+   ecFree(&point);
    mpiFree(&order);
    ecFree(&appendPoint);
    return error;
