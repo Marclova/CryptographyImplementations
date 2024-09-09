@@ -86,10 +86,10 @@ int main()
 
     printf("\n");
 
-    //Converting the signature into a more agile format (such as an uint8_t array)
+    //Converting the signature into a format fit to be sent (such as an uint8_t array)
     uint8_t buffer[sizeof(&params.q.data)];
     size_t bufferSize = sizeof(buffer);
-    dsaWriteSignature(&sign, buffer, &bufferSize);  //cant use 'sizeof(buffer)' here because a pointer is required
+    dsaWriteSignature(&sign, buffer, &bufferSize);  //can't use 'sizeof(buffer)' here because a pointer is required
     printf("Sent signature value (hex): ");
     for (size_t i = 0; i < sizeof(buffer); i++)
     {

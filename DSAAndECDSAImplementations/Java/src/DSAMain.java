@@ -51,6 +51,7 @@ public class DSAMain {
         BigInteger pValue = new BigInteger("131822006398165307258698055648413838687537767524671193922764733867799989387302018959074876252007822537180273324347375075132156773521963609412383460404934049365190601904571108395361576354462976935366413513250177554222238270271204765747908939012743527162703702046780423745988560805648320815268994567009996144811");
         BigInteger qValue = new BigInteger("859374346742477646223583445091564221150206800453");
 
+        //standard names
         String KeyPairGeneratorAlgorithmName = "DSA";
         String hashAlgorithmName = "SHA256withDSA";
 
@@ -60,7 +61,7 @@ public class DSAMain {
         KeyFactory keyFactory = KeyFactory.getInstance(KeyPairGeneratorAlgorithmName);
         
 
-        //parameters initialization
+        //custom parameters initialization
         BigInteger gValue = pCalculator.calculateGValue(new DSAParameterSpec(pValue, qValue, null), srg);
         
         DSAParameterSpec parameters = new DSAParameterSpec(pValue, qValue, gValue);
@@ -77,6 +78,7 @@ public class DSAMain {
         sign.initSign(privateKey);
         sign.update(FileToSign);
         byte[] generatedSignature = sign.sign();
+        //The generated signature is already in a proper format to be sent
 
         //verifying the file signature
         Signature verify = Signature.getInstance(hashAlgorithmName);
@@ -85,6 +87,8 @@ public class DSAMain {
         boolean match = verify.verify(generatedSignature);
 
         // - - - - - - - - - - - - - - - - - - - - - -
+
+        //#region print commands
 
         BytesConsolePrinter cPrinter = new BytesConsolePrinter();
         
@@ -106,6 +110,10 @@ public class DSAMain {
         System.out.println("generated signature:\n" + 
                             cPrinter.byteArrayToString(generatedSignature) + "\n");
 
-        System.out.println("Signature match: " + match);
+        System.out.println("\n- simulating the sending of the buffered signature, the data and public key to the other person -\n");
+
+        System.out.println("Signature match: " + match + "\n");
+
+        //#endregion
     }
 }

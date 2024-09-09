@@ -73,6 +73,7 @@ public class ECParametersCalculator extends ParametersCalculator
         BigInteger b = pProv.getB();
         BigInteger field = pProv.getP();
 
+        //Calculating Gy
         // y^2 = x^3 + ax + b => y = sqrt(x^3 + ax + b) (mod p)
         //compute Y^2 = x^3 + ax + b
         BigInteger yCoordinateSquare = xCoordinate.modPow(new BigInteger("3"), field)
@@ -102,7 +103,6 @@ public class ECParametersCalculator extends ParametersCalculator
         }
 
         BigInteger field = new ECParameterSpecExtractor(ecParams).getP();
-        BigInteger one = new BigInteger("1");
         BigInteger order = new BigInteger("2");
 
         while (!(rPoint.equals(point)))  // continue until (rPoint + point = point)
@@ -112,10 +112,10 @@ public class ECParametersCalculator extends ParametersCalculator
                 throw new IllegalArgumentException("The point (" + point.getAffineX() + ", " + point.getAffineY() + ") has no valid order.");
             }
             rPoint = this.ecFieldFpPointSum(rPoint, point, ecParams);
-            order = order.add(one);
+            order = order.add(BigInteger.ONE);
         }
 
-        return order.subtract(one);
+        return order.subtract(BigInteger.ONE);
         // throw new UnsupportedOperationException("Method 'calculateGValueAndUpdateParamSpec' is unimplemented because projective coordinates are mind-boggling!");
     }
 
@@ -162,16 +162,14 @@ public class ECParametersCalculator extends ParametersCalculator
             throw new IllegalArgumentException("private key can't be less or equal one");
         }
 
-        BigInteger zero = new BigInteger("0");
-        BigInteger one = new BigInteger("1");
         ECPoint gPoint = ecParams.getGenerator();
 
         ECPoint pubK = this.ecFieldFpPointDouble(gPoint, ecParams);
         privKValue = privKValue.subtract(new BigInteger("2"));  //with the double of the point two iterations has been spent
         
-        while (privKValue.compareTo(zero) != 0) {
+        while (privKValue.compareTo(BigInteger.ZERO) != 0) {
             pubK = this.ecFieldFpPointSum(pubK, gPoint, ecParams);
-            privKValue.subtract(one);
+            privKValue.subtract(BigInteger.ONE);
         }
 
         return new ECPublicKeySpec(pubK, ecParams);

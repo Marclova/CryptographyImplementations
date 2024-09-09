@@ -19,17 +19,19 @@ public class ECDSAMain {
     {
         //defining sample values
         byte[] FileToSign = "Hello World!".getBytes();
-        String standardCurveName = "secp256r1";
 
+        //standard names
+        String standardCurveName = "secp256r1";
         String KeyPairGeneratorAlgorithmName = "EC";
         String hashAlgorithmName = "SHA256withECDSA";
         
-        //initialing a standard curve
+        //initialing a standard curve with standard parameters (I don't know those values)
         ECGenParameterSpec parameters = new ECGenParameterSpec(standardCurveName);
-        KeyPairGenerator kPairGen = KeyPairGenerator.getInstance(KeyPairGeneratorAlgorithmName);
 
-        //generating key pair
+        KeyPairGenerator kPairGen = KeyPairGenerator.getInstance(KeyPairGeneratorAlgorithmName);
         kPairGen.initialize(parameters);
+
+        //generating a random key pair
         KeyPair kPair = kPairGen.generateKeyPair();
         PrivateKey privateKey = kPair.getPrivate();
         PublicKey publicKey = kPair.getPublic();
@@ -39,6 +41,7 @@ public class ECDSAMain {
         sign.initSign(privateKey);
         sign.update(FileToSign);
         byte[] generatedSignature = sign.sign();
+        //The generated signature is already in a proper format to be sent
 
         //verifying the file signature
         Signature verify = Signature.getInstance(hashAlgorithmName);
@@ -47,6 +50,8 @@ public class ECDSAMain {
         boolean match = verify.verify(generatedSignature);
 
         // - - - - - - - - - - - - - - - - - - - - -
+
+        //#region print commands
 
         BytesConsolePrinter cPrinter = new BytesConsolePrinter();
         
@@ -59,6 +64,8 @@ public class ECDSAMain {
         System.out.println("generated signature:\n" +
                             cPrinter.byteArrayToString(generatedSignature) + "\n");
 
-        System.out.println("Signature match: " + match);
+        System.out.println("Signature match: " + match + "\n");
+
+        //#endregion
     }
 }

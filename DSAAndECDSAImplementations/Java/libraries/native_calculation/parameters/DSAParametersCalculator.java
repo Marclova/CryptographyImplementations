@@ -57,16 +57,10 @@ public class DSAParametersCalculator extends ParametersCalculator
         BigInteger field = dsaParams.getP();
         BigInteger q = dsaParams.getQ();
         BigInteger h = srg.generateBiasedRandomBigIntegerBetweenExclusive(new BigInteger("1"), field);
-        BigInteger one = new BigInteger("1");
-
-        //compute g = h^((p-1)/n) (mod p)
-        // return h.modPow(
-        //             field.subtract(new BigInteger("1")).mod(field)
-        //             .divide(q),                                 //exponent
-        //             field                                           //module
-        //         );
+        
+        // compute g = ( h^((p-1)/n) )
         return h.modPow(
-                    field.subtract(one)
+                    field.subtract(BigInteger.ONE)
                     .multiply(q.modInverse(field)).mod(field),
                     field
                 );

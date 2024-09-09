@@ -89,7 +89,7 @@ int main()
     printf("Generated signature (r,s): ( %d , %d )\n", sign.r.data[0], sign.s.data[0]);    
     printf("\n");
 
-    //Converting the signature into a more agile format (such as an uint8_t array)
+    //Converting the signature into a format fit to be sent (such as an uint8_t array)
     uint8_t buffer[sizeof(&params.q.data)];
     size_t bufferSize = sizeof(buffer);
     ecdsaWriteSignature(&sign, buffer, &bufferSize);
