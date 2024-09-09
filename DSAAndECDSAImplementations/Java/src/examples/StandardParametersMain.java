@@ -20,23 +20,17 @@ public class StandardParametersMain {
         byte[] FileToSign = "Hello World!".getBytes();
 
         //generic parameters
-        // AlgorithmParameterSpec parameters;
         String KeyPairGeneratorAlgorithmName;
         String hashAlgorithmName;
-        // String standardCurveName;
 
         //standard names
         switch (1) {
             case 1:
-                // standardCurveName = "secp256r1";
-                // parameters = new DSAGenParameterSpec(1024, 160);
                 KeyPairGeneratorAlgorithmName = "DSA";
                 hashAlgorithmName = "SHA256withDSA";
                 break;
 
             case 2:
-                // standardCurveName = "secp256r1";
-                // parameters = new ECGenParameterSpec("secp256r1");
                 KeyPairGeneratorAlgorithmName = "EC";
                 hashAlgorithmName = "SHA256withECDSA";
                 break;
@@ -46,12 +40,7 @@ public class StandardParametersMain {
         }
 
 
-        
-        //initialing a standard curve with standard parameters (I don't know those values)
-        // ECGenParameterSpec parameters = new ECGenParameterSpec(standardCurveName);
-
         KeyPairGenerator kPairGen = KeyPairGenerator.getInstance(KeyPairGeneratorAlgorithmName);
-        // kPairGen.initialize(parameters);
 
         //generating a random key pair
         KeyPair kPair = kPairGen.generateKeyPair();
@@ -63,7 +52,6 @@ public class StandardParametersMain {
         sign.initSign(privateKey);
         sign.update(FileToSign);
         byte[] generatedSignature = sign.sign();
-        //The generated signature is already in a proper format to be sent
 
         //verifying the file signature
         Signature verify = Signature.getInstance(hashAlgorithmName);

@@ -105,7 +105,6 @@ public class CustomParametersMain {
         sign.initSign(keyPair.getPrivate());
         sign.update(FileToSign);
         byte[] generatedSignature = sign.sign();
-        //The generated signature is already in a proper format to be sent
 
         //verifying the file signature
         Signature verify = Signature.getInstance(hashAlgorithmName);
