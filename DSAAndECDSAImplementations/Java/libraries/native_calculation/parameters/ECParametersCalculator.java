@@ -30,19 +30,19 @@ import java.security.spec.ECParameterSpec;
 import java.security.spec.ECPoint;
 import java.security.spec.ECPrivateKeySpec;
 import java.security.spec.ECPublicKeySpec;
-import java.security.spec.KeySpec;
 
 //optional import
 import DSAAndECDSAImplementations.Java.libraries.minorUtilities.BytesConsolePrinter;
 
 import DSAAndECDSAImplementations.Java.libraries.native_calculation.SecureRandomGenerator;
-import DSAAndECDSAImplementations.Java.libraries.parameters_containers.ECParameterSpecExtractor;
+import DSAAndECDSAImplementations.Java.libraries.parameters_containers.ParametersExtractor;
 
 /**
  * This class doesn't work due two few not-implemented methods
  */
 public class ECParametersCalculator extends ParametersCalculator
 {
+
     /**
      * Generates and sets the 'g' value used for digital signature and returns the new parameters spec.
      * The inserted parameter spec must have all the parameters and the 'G' point must have at least the 'x' coordinate set.
@@ -52,26 +52,31 @@ public class ECParametersCalculator extends ParametersCalculator
      * @return The calculated 'G' as an ECPoint
      */
     @Override
-    public ECPoint calculateGValue(AlgorithmParameterSpec params, SecureRandomGenerator srg)
+    public ECParameterSpec calculateGValueAndUpdateParameterSpec(AlgorithmParameterSpec params, SecureRandomGenerator srg)
     {
-        if (!(params instanceof ECParameterSpec))
-        {
-            throw new IllegalArgumentException("The method 'calculatePublicKey' requires a ECParameterSpec, but received a "
-                                                + params.getClass() + " instead.");
-        }
+        // if (!(params instanceof ECParameterSpec))
+        // {
+        //     throw new IllegalArgumentException("The method 'calculatePublicKey' requires a ECParameterSpec, but received a "
+        //                                         + params.getClass() + " instead.");
+        // }
         
-        ECParameterSpec ecParams = (ECParameterSpec) params;
+        // ECParameterSpec ecParams = (ECParameterSpec) params;
 
-        return ecFieldFpCalculateGValue(ecParams); 
+        // ECPoint g = ecFieldFpCalculateGValue(ecParams);
+
+        // return new ECParameterSpec(ecParams.getCurve(), g, ecParams.getOrder(), 1);
+        throw new UnsupportedOperationException();
     }
 
+    @SuppressWarnings("unused")
     private ECPoint ecFieldFpCalculateGValue(ECParameterSpec ecParams)
     {
-        ECParameterSpecExtractor pProv = new ECParameterSpecExtractor(ecParams);
-        BigInteger xCoordinate = pProv.getG().getAffineX();
-        BigInteger a = pProv.getA();
-        BigInteger b = pProv.getB();
-        BigInteger field = pProv.getP();
+        ParametersExtractor extractor = new ParametersExtractor();
+        extractor.extractFromParameterSpec(ecParams);
+        BigInteger xCoordinate = ((ECPoint) extractor.getG()).getAffineX();
+        BigInteger a = extractor.getA();
+        BigInteger b = extractor.getB();
+        BigInteger field = extractor.getP();
 
         //Calculating Gy
         // y^2 = x^3 + ax + b => y = sqrt(x^3 + ax + b) (mod p)
@@ -99,10 +104,12 @@ public class ECParametersCalculator extends ParametersCalculator
 
         if (rPoint.equals(point))  // (point + point = point) => point is already a point to infinity
         {
-            return new BigInteger("1");
+            return BigInteger.ONE;
         }
 
-        BigInteger field = new ECParameterSpecExtractor(ecParams).getP();
+        ParametersExtractor extractor = new ParametersExtractor();
+        extractor.extractFromParameterSpec(ecParams);
+        BigInteger field = extractor.getP();
         BigInteger order = new BigInteger("2");
 
         while (!(rPoint.equals(point)))  // continue until (rPoint + point = point)
@@ -119,6 +126,19 @@ public class ECParametersCalculator extends ParametersCalculator
         // throw new UnsupportedOperationException("Method 'calculateGValueAndUpdateParamSpec' is unimplemented because projective coordinates are mind-boggling!");
     }
 
+    public ECPrivateKeySpec calculatePrivateKeySpec(byte[] privateKeyValue, AlgorithmParameterSpec params)
+    {
+        if (!(params instanceof ECParameterSpec))
+        {
+            throw new IllegalArgumentException("The method 'calculatePublicKey' requires a ECParameterSpec, but received a "
+                                                + params.getClass() + " instead.");
+        }
+        
+        ECParameterSpec ecParams = (ECParameterSpec) params;
+
+        return new ECPrivateKeySpec(new BigInteger(privateKeyValue), ecParams);
+    }
+
     /**
      * Calculates the public key
      * 
@@ -127,23 +147,17 @@ public class ECParametersCalculator extends ParametersCalculator
      * @return The public key as an ECPoint
      */
     @Override
-    public ECPublicKeySpec calculatePublicKey(KeySpec privateKey, AlgorithmParameterSpec params)
+    public ECPublicKeySpec calculatePublicKeySpec(byte[] privateKeyValue, AlgorithmParameterSpec params)
     {
         if (!(params instanceof ECParameterSpec))
         {
             throw new IllegalArgumentException("The method 'calculatePublicKey' requires a ECParameterSpec, but received a "
                                                 + params.getClass() + " instead.");
         }
-        if (!(params instanceof ECParameterSpec))
-        {
-            throw new IllegalArgumentException("The method 'calculateGValue' requires a ECPrivateKeySpec, but received a "
-                                                + privateKey.getClass() + " instead.");
-        }
         
         ECParameterSpec ecParams = (ECParameterSpec) params;
-        ECPrivateKeySpec privKeySpec = (ECPrivateKeySpec) privateKey;
 
-        return  this.ecFieldFpCalculatePublicKey(privKeySpec.getS().toByteArray(), ecParams);
+        return  this.ecFieldFpCalculatePublicKey(privateKeyValue, ecParams);
     }
 
     /**

@@ -24,12 +24,34 @@
 
 package DSAAndECDSAImplementations.Java.libraries.native_calculation.parameters;
 
+import java.security.NoSuchAlgorithmException;
 import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.KeySpec;
 
 import DSAAndECDSAImplementations.Java.libraries.native_calculation.SecureRandomGenerator;
 
-public abstract class ParametersCalculator {
+public abstract class ParametersCalculator
+{
+    /**
+     * Instances a ParametersCalculator's sub-type.
+     * 
+     * @param algorithm The required algorithm's name
+     * @return The instanced ParametersCalculator's sub-type.
+     * @throws NoSuchAlgorithmException when an unsupported algorithm is required.
+     */
+    public static ParametersCalculator simpleGetInstance(String algorithm) throws NoSuchAlgorithmException
+    {
+        switch (algorithm) {
+            case "DSA":
+                return new DSAParametersCalculator();
+
+            case "EC":
+                return new ECParametersCalculator();
+        
+            default:
+                throw new NoSuchAlgorithmException();
+        }
+    }
 
     /**
      * Generates and sets the 'g' value used for digital signature and returns the new parameters spec.
@@ -39,22 +61,23 @@ public abstract class ParametersCalculator {
      * @param srg The secure pseudo-random generator.
      * @return The calculated 'g' value which type depends from the used implementation
      */
-    public abstract Object calculateGValue(AlgorithmParameterSpec params, SecureRandomGenerator srg);
+    public abstract AlgorithmParameterSpec calculateGValueAndUpdateParameterSpec(AlgorithmParameterSpec params, SecureRandomGenerator srg);
+
+    /**
+     * Calculates the private key
+     * 
+     * @param privateKeyValue The private key associated with the public key to create
+     * @param params The AlgorithmParameterSpec parameters used to calculate the public key
+     * @return The private key which type depends from the used implementation
+     */
+    public abstract KeySpec calculatePrivateKeySpec(byte[] privateKeyValue, AlgorithmParameterSpec params);
 
     /**
      * Calculates the public key
      * 
-     * @param privateKey The private key associated with the public key to create
+     * @param privateKeyValue The private key associated with the public key to create
      * @param params The AlgorithmParameterSpec parameters used to calculate the public key
      * @return The public key which type depends from the used implementation
      */
-    public abstract KeySpec calculatePublicKey(KeySpec privateKey, AlgorithmParameterSpec params);
-
-    // /**
-    //  * 
-    //  * 
-    //  * @param params
-    //  * @return
-    //  */
-    // public abstract ParameterSpecProvider extractValuesFromParameterSpec(AlgorithmParameterSpec params);
+    public abstract KeySpec calculatePublicKeySpec(byte[] privateKeyValue, AlgorithmParameterSpec params);
 }

@@ -29,7 +29,6 @@ import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.DSAParameterSpec;
 import java.security.spec.DSAPrivateKeySpec;
 import java.security.spec.DSAPublicKeySpec;
-import java.security.spec.KeySpec;
 
 import DSAAndECDSAImplementations.Java.libraries.native_calculation.SecureRandomGenerator;
 
@@ -44,7 +43,7 @@ public class DSAParametersCalculator extends ParametersCalculator
      * @return The calculated 'g' value as a BigInteger
      */
     @Override
-    public BigInteger calculateGValue(AlgorithmParameterSpec params, SecureRandomGenerator srg)
+    public DSAParameterSpec calculateGValueAndUpdateParameterSpec(AlgorithmParameterSpec params, SecureRandomGenerator srg)
     {
         if (!(params instanceof DSAParameterSpec))
         {
@@ -59,33 +58,43 @@ public class DSAParametersCalculator extends ParametersCalculator
         BigInteger h = srg.generateBiasedRandomBigIntegerBetweenExclusive(new BigInteger("1"), field);
         
         // compute g = ( h^((p-1)/n) )
-        return h.modPow(
-                    field.subtract(BigInteger.ONE)
-                    .multiply(q.modInverse(field)).mod(field),
-                    field
-                );
+        BigInteger g = h.modPow(
+                            field.subtract(BigInteger.ONE)
+                            .multiply(q.modInverse(field)).mod(field),
+                            field
+                        );
+        
+        return new DSAParameterSpec(field, q, g);
     }
 
     @Override
-    public DSAPublicKeySpec calculatePublicKey(KeySpec privateKey, AlgorithmParameterSpec params)
+    public DSAPrivateKeySpec calculatePrivateKeySpec(byte[] privateKeyValue, AlgorithmParameterSpec params)
     {
         if (!(params instanceof DSAParameterSpec))
         {
             throw new IllegalArgumentException("The method 'calculateGValue' requires a DSAParameterSpec, but received a "
                                                 + params.getClass() + " instead.");
         }
+
+        DSAParameterSpec dsaParams = (DSAParameterSpec) params;
+
+        return new DSAPrivateKeySpec(new BigInteger(privateKeyValue), dsaParams.getP(), dsaParams.getQ(), dsaParams.getG());
+    }
+
+    @Override
+    public DSAPublicKeySpec calculatePublicKeySpec(byte[] privateKeyValue, AlgorithmParameterSpec params)
+    {
         if (!(params instanceof DSAParameterSpec))
         {
-            throw new IllegalArgumentException("The method 'calculateGValue' requires a DSAPrivateKeySpec, but received a "
-                                                + privateKey.getClass() + " instead.");
+            throw new IllegalArgumentException("The method 'calculateGValue' requires a DSAParameterSpec, but received a "
+                                                + params.getClass() + " instead.");
         }
 
         DSAParameterSpec dsaParams = (DSAParameterSpec) params;
-        DSAPrivateKeySpec privKSpec = (DSAPrivateKeySpec) privateKey;
 
         BigInteger p = dsaParams.getP();
         BigInteger g = dsaParams.getG();
-        BigInteger privKValue = privKSpec.getX();
+        BigInteger privKValue = new BigInteger(privateKeyValue);
         //compute g^d (mod p)
         BigInteger pubKValue = g.modPow(privKValue, p);
 
