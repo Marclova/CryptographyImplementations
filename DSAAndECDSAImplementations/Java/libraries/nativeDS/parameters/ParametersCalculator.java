@@ -28,7 +28,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.KeySpec;
 
-import DSAAndECDSAImplementations.Java.libraries.NativeDS.SecureRandomGenerator;
+import DSAAndECDSAImplementations.Java.libraries.NativeDS.util.SecureRandomGenerator;
 
 public abstract class ParametersCalculator
 {

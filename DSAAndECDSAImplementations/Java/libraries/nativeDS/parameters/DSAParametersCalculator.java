@@ -30,7 +30,7 @@ import java.security.spec.DSAParameterSpec;
 import java.security.spec.DSAPrivateKeySpec;
 import java.security.spec.DSAPublicKeySpec;
 
-import DSAAndECDSAImplementations.Java.libraries.NativeDS.SecureRandomGenerator;
+import DSAAndECDSAImplementations.Java.libraries.NativeDS.util.SecureRandomGenerator;
 
 public class DSAParametersCalculator extends ParametersCalculator
 {

@@ -31,11 +31,9 @@ import java.security.spec.ECPoint;
 import java.security.spec.ECPrivateKeySpec;
 import java.security.spec.ECPublicKeySpec;
 
+import DSAAndECDSAImplementations.Java.libraries.NativeDS.util.SecureRandomGenerator;
 //optional import
 import DSAAndECDSAImplementations.Java.libraries.minorUtilities.BytesConsolePrinter;
-
-import DSAAndECDSAImplementations.Java.libraries.NativeDS.SecureRandomGenerator;
-// import DSAAndECDSAImplementations.Java.libraries.NativeDS.parameters.ParametersExtractor;  //used in commented code
 
 /**
  * This class doesn't work due two few not-implemented methods

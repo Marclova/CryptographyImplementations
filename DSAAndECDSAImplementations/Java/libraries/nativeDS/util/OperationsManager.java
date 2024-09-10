@@ -1,4 +1,4 @@
-package DSAAndECDSAImplementations.Java.libraries.NativeDS;
+package DSAAndECDSAImplementations.Java.libraries.NativeDS.util;
 
 import java.security.InvalidKeyException;
 import java.security.KeyFactory;

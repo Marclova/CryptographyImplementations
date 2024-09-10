@@ -41,8 +41,8 @@ import java.security.spec.InvalidKeySpecException;
 
 import DSAAndECDSAImplementations.Java.libraries.minorUtilities.BytesConsolePrinter;
 import DSAAndECDSAImplementations.Java.libraries.minorUtilities.ECPointConsolePrinter;
-import DSAAndECDSAImplementations.Java.libraries.NativeDS.OperationsManager;
 import DSAAndECDSAImplementations.Java.libraries.NativeDS.parameters.ParametersExtractor;
+import DSAAndECDSAImplementations.Java.libraries.NativeDS.util.OperationsManager;
 
 public class CustomParametersMain {
     public static void main(String[] args)
