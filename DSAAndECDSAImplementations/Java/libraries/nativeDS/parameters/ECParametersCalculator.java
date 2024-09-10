@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package DSAAndECDSAImplementations.Java.libraries.native_calculation.parameters;
+package DSAAndECDSAImplementations.Java.libraries.NativeDS.parameters;
 
 import java.math.BigInteger;
 import java.security.spec.AlgorithmParameterSpec;
@@ -34,8 +34,8 @@ import java.security.spec.ECPublicKeySpec;
 //optional import
 import DSAAndECDSAImplementations.Java.libraries.minorUtilities.BytesConsolePrinter;
 
-import DSAAndECDSAImplementations.Java.libraries.native_calculation.SecureRandomGenerator;
-import DSAAndECDSAImplementations.Java.libraries.parameters_containers.ParametersExtractor;
+import DSAAndECDSAImplementations.Java.libraries.NativeDS.SecureRandomGenerator;
+// import DSAAndECDSAImplementations.Java.libraries.NativeDS.parameters.ParametersExtractor;  //used in commented code
 
 /**
  * This class doesn't work due two few not-implemented methods

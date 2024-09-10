@@ -22,13 +22,13 @@
  * SOFTWARE.
  */
 
-package DSAAndECDSAImplementations.Java.libraries.native_calculation.parameters;
+package DSAAndECDSAImplementations.Java.libraries.NativeDS.parameters;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.KeySpec;
 
-import DSAAndECDSAImplementations.Java.libraries.native_calculation.SecureRandomGenerator;
+import DSAAndECDSAImplementations.Java.libraries.NativeDS.SecureRandomGenerator;
 
 public abstract class ParametersCalculator
 {

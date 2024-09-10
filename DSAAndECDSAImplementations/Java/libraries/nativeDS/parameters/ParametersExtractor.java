@@ -1,4 +1,4 @@
-package DSAAndECDSAImplementations.Java.libraries.parameters_containers;
+package DSAAndECDSAImplementations.Java.libraries.NativeDS.parameters;
 
 import java.math.BigInteger;
 import java.security.KeyFactory;

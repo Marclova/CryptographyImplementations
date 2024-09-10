@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package DSAAndECDSAImplementations.Java.libraries.native_calculation;
+package DSAAndECDSAImplementations.Java.libraries.NativeDS;
 
 import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;

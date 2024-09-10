@@ -1,4 +1,4 @@
-package DSAAndECDSAImplementations.Java.libraries.native_calculation;
+package DSAAndECDSAImplementations.Java.libraries.NativeDS;
 
 import java.security.InvalidKeyException;
 import java.security.KeyFactory;
@@ -12,7 +12,7 @@ import java.security.SignatureException;
 import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.InvalidKeySpecException;
 
-import DSAAndECDSAImplementations.Java.libraries.native_calculation.parameters.ParametersCalculator;
+import DSAAndECDSAImplementations.Java.libraries.NativeDS.parameters.ParametersCalculator;
 
 public class OperationsManager
 {

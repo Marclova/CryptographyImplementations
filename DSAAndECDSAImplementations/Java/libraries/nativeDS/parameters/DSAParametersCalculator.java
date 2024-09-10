@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package DSAAndECDSAImplementations.Java.libraries.native_calculation.parameters;
+package DSAAndECDSAImplementations.Java.libraries.NativeDS.parameters;
 
 import java.math.BigInteger;
 import java.security.spec.AlgorithmParameterSpec;
@@ -30,7 +30,7 @@ import java.security.spec.DSAParameterSpec;
 import java.security.spec.DSAPrivateKeySpec;
 import java.security.spec.DSAPublicKeySpec;
 
-import DSAAndECDSAImplementations.Java.libraries.native_calculation.SecureRandomGenerator;
+import DSAAndECDSAImplementations.Java.libraries.NativeDS.SecureRandomGenerator;
 
 public class DSAParametersCalculator extends ParametersCalculator
 {
