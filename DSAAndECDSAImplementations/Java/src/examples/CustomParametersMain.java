@@ -28,7 +28,6 @@ import java.math.BigInteger;
 import java.security.InvalidKeyException;
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
-import java.security.Signature;
 import java.security.SignatureException;
 import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.DSAParameterSpec;
@@ -39,7 +38,6 @@ import java.security.spec.ECPoint;
 import java.security.spec.ECPublicKeySpec;
 import java.security.spec.EllipticCurve;
 import java.security.spec.InvalidKeySpecException;
-import java.security.spec.KeySpec;
 
 import DSAAndECDSAImplementations.Java.libraries.minorUtilities.BytesConsolePrinter;
 import DSAAndECDSAImplementations.Java.libraries.minorUtilities.ECPointConsolePrinter;
@@ -47,11 +45,11 @@ import DSAAndECDSAImplementations.Java.libraries.native_calculation.OperationsMa
 import DSAAndECDSAImplementations.Java.libraries.parameters_containers.ParametersExtractor;
 
 public class CustomParametersMain {
-    public static <T extends KeySpec> void main(String[] args)
+    public static void main(String[] args)
         throws NoSuchAlgorithmException, InvalidKeySpecException, InvalidKeyException, SignatureException
     {
         //Defining sample values
-        byte[] FileToSign = "Hello World!".getBytes();
+        byte[] fileToSign = "Hello World!".getBytes();
         byte[] privateKeyValue = "Custom private key value".getBytes();
         BigInteger pValue = new BigInteger("131822006398165307258698055648413838687537767524671193922764733867799989387302018959074876252007822537180273324347375075132156773521963609412383460404934049365190601904571108395361576354462976935366413513250177554222238270271204765747908939012743527162703702046780423745988560805648320815268994567009996144811");
         BigInteger qValue = new BigInteger("859374346742477646223583445091564221150206800453");
@@ -90,7 +88,7 @@ public class CustomParametersMain {
         }
         
         //initializing parameters manager
-        OperationsManager opManager = new OperationsManager(KeyPairGeneratorAlgorithmName);
+        OperationsManager opManager = new OperationsManager(KeyPairGeneratorAlgorithmName, hashAlgorithmName);
         
 
 
@@ -101,16 +99,10 @@ public class CustomParametersMain {
         KeyPair keyPair = opManager.calculateKeyPair(privateKeyValue, parameters);
 
         //applying the file signature
-        Signature sign = Signature.getInstance(hashAlgorithmName);
-        sign.initSign(keyPair.getPrivate());
-        sign.update(FileToSign);
-        byte[] generatedSignature = sign.sign();
+        byte[] generatedSignature = opManager.signFile(fileToSign, keyPair.getPrivate());
 
         //verifying the file signature
-        Signature verify = Signature.getInstance(hashAlgorithmName);
-        verify.initVerify(keyPair.getPublic());
-        verify.update(FileToSign);
-        boolean match = verify.verify(generatedSignature);
+        boolean match = opManager.verifySignature(fileToSign, generatedSignature, keyPair.getPublic());
 
         // - - - - - - - - - - - - - - - - - - - - - -
 

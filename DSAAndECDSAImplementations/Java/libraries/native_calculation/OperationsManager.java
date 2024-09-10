@@ -1,11 +1,14 @@
 package DSAAndECDSAImplementations.Java.libraries.native_calculation;
 
+import java.security.InvalidKeyException;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
+import java.security.Signature;
+import java.security.SignatureException;
 import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.InvalidKeySpecException;
 
@@ -15,19 +18,22 @@ public class OperationsManager
 {
     private KeyFactory keyFactory;
     private ParametersCalculator pCalculator;
+    private Signature signatureManager;
     private SecureRandomGenerator srg;
 
-    public OperationsManager(String KeyPairGeneratorAlgorithmName) throws NoSuchAlgorithmException
+    public OperationsManager(String KeyPairGeneratorAlgorithmName, String hashAlgorithmName) throws NoSuchAlgorithmException
     {
         this.keyFactory = KeyFactory.getInstance(KeyPairGeneratorAlgorithmName);
         this.pCalculator = ParametersCalculator.simpleGetInstance(KeyPairGeneratorAlgorithmName);
+        this.signatureManager = Signature.getInstance(hashAlgorithmName);
         this.srg = new SecureRandomGenerator();
     }
 
-    public OperationsManager(String KeyPairGeneratorAlgorithmName, SecureRandom secureRandom) throws NoSuchAlgorithmException
+    public OperationsManager(String KeyPairGeneratorAlgorithmName, String hashAlgorithmName, SecureRandom secureRandom) throws NoSuchAlgorithmException
     {
         this.keyFactory = KeyFactory.getInstance(KeyPairGeneratorAlgorithmName);
         this.pCalculator = ParametersCalculator.simpleGetInstance(KeyPairGeneratorAlgorithmName);
+        this.signatureManager = Signature.getInstance(hashAlgorithmName);
         this.srg = new SecureRandomGenerator(secureRandom);
     }
 
@@ -46,8 +52,20 @@ public class OperationsManager
         return new KeyPair(publicKey, privateKey);
     }
 
-    // public byte[] signFile(byte[] file, String hashAlgorithmName)
-    // {
+    public byte[] signFile(byte[] file, PrivateKey privateKey)
+        throws NoSuchAlgorithmException, InvalidKeyException, SignatureException
+    {
+        this.signatureManager.initSign(privateKey);
+        this.signatureManager.update(file);
+        
+        return signatureManager.sign();
+    }
 
-    // }
+    public boolean verifySignature(byte[] signedFile, byte[] signatureToVerify, PublicKey publicKey)
+        throws InvalidKeyException, SignatureException
+    {
+        this.signatureManager.initVerify(publicKey);
+        this.signatureManager.update(signedFile);
+        return this.signatureManager.verify(signatureToVerify);
+    }
 }
