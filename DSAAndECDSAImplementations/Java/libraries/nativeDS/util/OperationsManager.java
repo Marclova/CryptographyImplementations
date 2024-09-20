@@ -19,14 +19,14 @@ public class OperationsManager
     private KeyFactory keyFactory;
     private ParametersCalculator pCalculator;
     private Signature signatureManager;
-    private SecureRandomGenerator srg;
+    private SecureRandomNumberGenerator srg;
 
     public OperationsManager(String KeyPairGeneratorAlgorithmName, String hashAlgorithmName) throws NoSuchAlgorithmException
     {
         this.keyFactory = KeyFactory.getInstance(KeyPairGeneratorAlgorithmName);
         this.pCalculator = ParametersCalculator.simpleGetInstance(KeyPairGeneratorAlgorithmName);
         this.signatureManager = Signature.getInstance(hashAlgorithmName);
-        this.srg = new SecureRandomGenerator();
+        this.srg = new SecureRandomNumberGenerator();
     }
 
     public OperationsManager(String KeyPairGeneratorAlgorithmName, String hashAlgorithmName, SecureRandom secureRandom) throws NoSuchAlgorithmException
@@ -34,7 +34,7 @@ public class OperationsManager
         this.keyFactory = KeyFactory.getInstance(KeyPairGeneratorAlgorithmName);
         this.pCalculator = ParametersCalculator.simpleGetInstance(KeyPairGeneratorAlgorithmName);
         this.signatureManager = Signature.getInstance(hashAlgorithmName);
-        this.srg = new SecureRandomGenerator(secureRandom);
+        this.srg = new SecureRandomNumberGenerator(secureRandom);
     }
 
     public AlgorithmParameterSpec calculateGValueAndUpdateParamSpec(AlgorithmParameterSpec params)

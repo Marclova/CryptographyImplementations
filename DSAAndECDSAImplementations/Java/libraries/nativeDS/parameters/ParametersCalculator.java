@@ -28,7 +28,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.KeySpec;
 
-import DSAAndECDSAImplementations.Java.libraries.NativeDS.util.SecureRandomGenerator;
+import DSAAndECDSAImplementations.Java.libraries.NativeDS.util.SecureRandomNumberGenerator;
 
 public abstract class ParametersCalculator
 {
@@ -61,7 +61,7 @@ public abstract class ParametersCalculator
      * @param srg The secure pseudo-random generator.
      * @return The calculated 'g' value which type depends from the used implementation
      */
-    public abstract AlgorithmParameterSpec calculateGValueAndUpdateParameterSpec(AlgorithmParameterSpec params, SecureRandomGenerator srg);
+    public abstract AlgorithmParameterSpec calculateGValueAndUpdateParameterSpec(AlgorithmParameterSpec params, SecureRandomNumberGenerator srg);
 
     /**
      * Calculates the private key

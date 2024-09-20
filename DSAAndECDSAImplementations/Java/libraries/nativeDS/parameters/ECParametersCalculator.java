@@ -31,7 +31,7 @@ import java.security.spec.ECPoint;
 import java.security.spec.ECPrivateKeySpec;
 import java.security.spec.ECPublicKeySpec;
 
-import DSAAndECDSAImplementations.Java.libraries.NativeDS.util.SecureRandomGenerator;
+import DSAAndECDSAImplementations.Java.libraries.NativeDS.util.SecureRandomNumberGenerator;
 //optional import
 import DSAAndECDSAImplementations.Java.libraries.minorUtilities.BytesConsolePrinter;
 
@@ -50,7 +50,7 @@ public class ECParametersCalculator extends ParametersCalculator
      * @return The calculated 'G' as an ECPoint
      */
     @Override
-    public ECParameterSpec calculateGValueAndUpdateParameterSpec(AlgorithmParameterSpec params, SecureRandomGenerator srg)
+    public ECParameterSpec calculateGValueAndUpdateParameterSpec(AlgorithmParameterSpec params, SecureRandomNumberGenerator srg)
     {
         // if (!(params instanceof ECParameterSpec))
         // {

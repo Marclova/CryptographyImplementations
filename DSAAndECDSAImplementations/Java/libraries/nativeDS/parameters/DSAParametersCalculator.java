@@ -30,7 +30,7 @@ import java.security.spec.DSAParameterSpec;
 import java.security.spec.DSAPrivateKeySpec;
 import java.security.spec.DSAPublicKeySpec;
 
-import DSAAndECDSAImplementations.Java.libraries.NativeDS.util.SecureRandomGenerator;
+import DSAAndECDSAImplementations.Java.libraries.NativeDS.util.SecureRandomNumberGenerator;
 
 public class DSAParametersCalculator extends ParametersCalculator
 {
@@ -43,7 +43,7 @@ public class DSAParametersCalculator extends ParametersCalculator
      * @return The calculated 'g' value as a BigInteger
      */
     @Override
-    public DSAParameterSpec calculateGValueAndUpdateParameterSpec(AlgorithmParameterSpec params, SecureRandomGenerator srg)
+    public DSAParameterSpec calculateGValueAndUpdateParameterSpec(AlgorithmParameterSpec params, SecureRandomNumberGenerator srg)
     {
         if (!(params instanceof DSAParameterSpec))
         {

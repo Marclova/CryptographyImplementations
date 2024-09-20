@@ -28,16 +28,16 @@ import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
-public class SecureRandomGenerator {
+public class SecureRandomNumberGenerator {
 
     SecureRandom secureRandom;
 
-    public SecureRandomGenerator() throws NoSuchAlgorithmException
+    public SecureRandomNumberGenerator() throws NoSuchAlgorithmException
     {
         this.secureRandom = SecureRandom.getInstance("SHA1PRNG");
     }
 
-    public SecureRandomGenerator(SecureRandom secureRandom)
+    public SecureRandomNumberGenerator(SecureRandom secureRandom)
     {
         this.secureRandom = secureRandom;
     }
