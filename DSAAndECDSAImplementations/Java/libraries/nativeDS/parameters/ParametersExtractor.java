@@ -29,20 +29,8 @@ public class ParametersExtractor implements AlgorithmParameterSpec{
 
     public void extractFromKey(PublicKey key) throws InvalidKeySpecException, NoSuchAlgorithmException
     {
-        switch (key.getAlgorithm()) {
-            case "DSA":
-                DSAPublicKeySpec DSAKeySpec = KeyFactory.getInstance("DSA").getKeySpec(key, DSAPublicKeySpec.class);
-                this.extractFromKeySpec(DSAKeySpec);
-                break;
-
-            case "EC":
-                ECPublicKeySpec ECKeySpec = KeyFactory.getInstance("EC").getKeySpec(key, ECPublicKeySpec.class);
-                this.extractFromKeySpec(ECKeySpec);
-                break;
-
-            default:
-                throw new UnsupportedOperationException();
-        }
+        DSAPublicKeySpec keySpec = KeyFactory.getInstance(key.getAlgorithm()).getKeySpec(key, DSAPublicKeySpec.class);
+        this.extractFromKeySpec(keySpec);
     }
 
     public void extractFromKeySpec(DSAPublicKeySpec key)
