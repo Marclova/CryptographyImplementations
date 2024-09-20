@@ -19,14 +19,14 @@ public class OperationsManager
     private KeyFactory keyFactory;
     private ParametersCalculator pCalculator;
     private Signature signatureManager;
-    private SecureRandomNumberGenerator srg;
+    private SecureRandomNumberGenerator srng;
 
     public OperationsManager(String KeyPairGeneratorAlgorithmName, String hashAlgorithmName) throws NoSuchAlgorithmException
     {
         this.keyFactory = KeyFactory.getInstance(KeyPairGeneratorAlgorithmName);
         this.pCalculator = ParametersCalculator.simpleGetInstance(KeyPairGeneratorAlgorithmName);
         this.signatureManager = Signature.getInstance(hashAlgorithmName);
-        this.srg = new SecureRandomNumberGenerator();
+        this.srng = new SecureRandomNumberGenerator();
     }
 
     public OperationsManager(String KeyPairGeneratorAlgorithmName, String hashAlgorithmName, SecureRandom secureRandom) throws NoSuchAlgorithmException
@@ -34,12 +34,12 @@ public class OperationsManager
         this.keyFactory = KeyFactory.getInstance(KeyPairGeneratorAlgorithmName);
         this.pCalculator = ParametersCalculator.simpleGetInstance(KeyPairGeneratorAlgorithmName);
         this.signatureManager = Signature.getInstance(hashAlgorithmName);
-        this.srg = new SecureRandomNumberGenerator(secureRandom);
+        this.srng = new SecureRandomNumberGenerator(secureRandom);
     }
 
     public AlgorithmParameterSpec calculateGValueAndUpdateParamSpec(AlgorithmParameterSpec params)
     {
-        return this.pCalculator.calculateGValueAndUpdateParameterSpec(params, this.srg);
+        return this.pCalculator.calculateGValueAndUpdateParameterSpec(params, this.srng);
     }
 
     public KeyPair calculateKeyPair(byte[] privateKeyValue, AlgorithmParameterSpec params) throws InvalidKeySpecException
