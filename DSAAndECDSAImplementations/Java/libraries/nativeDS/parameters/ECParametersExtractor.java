@@ -1,5 +1,6 @@
 package DSAAndECDSAImplementations.Java.libraries.NativeDS.parameters;
 
+import java.math.BigInteger;
 import java.security.Key;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
@@ -18,6 +19,10 @@ import javax.management.openmbean.InvalidKeyException;
 
 public class ECParametersExtractor extends ParametersExtractor
 {
+    private BigInteger a;
+    private BigInteger b;
+
+
     public ECParametersExtractor() {};
 
 
@@ -134,5 +139,27 @@ public class ECParametersExtractor extends ParametersExtractor
         this.setP(((ECFieldFp) ellipticCurve.getField()).getP());
         this.setQ(ecParamSpec.getOrder());
         this.setG(ecParamSpec.getGenerator());
+    }
+
+    //setters
+    public void setA(BigInteger a)
+    {
+        this.a = a;
+    }
+
+    public void setB(BigInteger b)
+    {
+        this.b = b;
+    }
+
+    //getters
+    public BigInteger getA()
+    {
+        return this.a;    
+    }
+    
+    public BigInteger getB()
+    {
+        return this.b;
     }
 }

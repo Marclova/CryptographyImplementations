@@ -72,22 +72,7 @@ public class StandardParametersMain {
 
         
 
-        //#region print commands  //TODO fix the print
-
-        // BytesConsolePrinter cPrinter = new BytesConsolePrinter();
-        
-        // System.out.println("Selected algorithm: " + KeyPairGeneratorAlgorithmName + "\n");
-        
-        // System.out.println("\nextracted private key value:\n" +
-        //                     cPrinter.byteArrayToString(privateKey.getEncoded()) + "\n");
-        
-        // System.out.println("calculated public key value:\n" +
-        //                     cPrinter.byteArrayToString(publicKey.getEncoded()) + "\n");
-
-        // System.out.println("generated signature:\n" +
-        //                     cPrinter.byteArrayToString(generatedSignature) + "\n");
-
-        // System.out.println("Signature match: " + match + "\n");
+        //#region print commands
 
         extractor.extractFromPublicKey(publicKey);
         extractor.extractFromPrivateKey(privateKey);

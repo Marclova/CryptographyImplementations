@@ -9,8 +9,6 @@ import java.security.spec.KeySpec;
 
 public abstract class ParametersExtractor implements AlgorithmParameterSpec
 {
-    private BigInteger a;
-    private BigInteger b;
     private BigInteger p;
     private BigInteger q;
     private Object g;
@@ -61,17 +59,7 @@ public abstract class ParametersExtractor implements AlgorithmParameterSpec
      */
     public abstract void extractFromParameterSpec(AlgorithmParameterSpec params);
 
-    //setters
-    public void setA(BigInteger a)
-    {
-        this.a = a;
-    }
-
-    public void setB(BigInteger b)
-    {
-        this.b = b;
-    }
-    
+    //setters    
     public void setP(BigInteger p)
     {
         this.p = p;
@@ -97,17 +85,7 @@ public abstract class ParametersExtractor implements AlgorithmParameterSpec
         this.y = y;
     }
 
-    //getters
-    public BigInteger getA()
-    {
-        return this.a;    
-    }
-    
-    public BigInteger getB()
-    {
-        return this.b;
-    }
-    
+    //getters    
     public BigInteger getP()
     {
         return this.p;
