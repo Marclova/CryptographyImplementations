@@ -1,21 +1,14 @@
 package DSAAndECDSAImplementations.Java.libraries.NativeDS.parameters;
 
-import java.math.BigInteger;
 import java.security.Key;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
-import java.security.PublicKey;
 import java.security.interfaces.DSAPrivateKey;
 import java.security.interfaces.DSAPublicKey;
 import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.DSAParameterSpec;
 import java.security.spec.DSAPrivateKeySpec;
 import java.security.spec.DSAPublicKeySpec;
-import java.security.spec.ECFieldFp;
-import java.security.spec.ECParameterSpec;
-import java.security.spec.ECPublicKeySpec;
-import java.security.spec.EllipticCurve;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 
