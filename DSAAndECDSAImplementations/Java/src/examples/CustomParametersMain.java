@@ -66,7 +66,7 @@ public class CustomParametersMain {
         ECPointConsolePrinter ecPrinter = new ECPointConsolePrinter();
         Object[] keySpecType = new Object[2];
 
-        //specific algorithm choice
+        //#region choosing algorithm
         short choice = 0;
         switch (choice) {
             case 0:
@@ -86,6 +86,7 @@ public class CustomParametersMain {
             default:
                 throw new IllegalArgumentException("invalid choice");
         }
+        //#endregion
         
         //initializing parameters manager
         OperationsManager opManager = new OperationsManager(KeyPairGeneratorAlgorithmName, hashAlgorithmName);
@@ -104,7 +105,7 @@ public class CustomParametersMain {
         //verifying the file signature
         boolean match = opManager.verifySignature(fileToSign, generatedSignature, keyPair.getPublic());
 
-        // - - - - - - - - - - - - - - - - - - - - - -
+        
 
         //#region print commands
 
@@ -112,10 +113,9 @@ public class CustomParametersMain {
         
         extractor.extractFromKey(keyPair.getPublic());
         Object gValue = extractor.getG();
-        String gStringValue;
-
-        extractor.extractFromKey(keyPair.getPublic());
         Object yValue = extractor.getY();
+
+        String gStringValue;
         String yStringValue;
 
         if (gValue instanceof BigInteger)
