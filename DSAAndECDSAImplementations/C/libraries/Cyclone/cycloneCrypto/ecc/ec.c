@@ -399,7 +399,7 @@ error_t ecCalculatePointOrder(const EcDomainParameters *params, const EcPoint *a
    }
    else
    {
-      // mpiFree(r);
+      mpiFree(r);
       error = ERROR_ILLEGAL_PARAMETER; //probably there's a problem with the given point
    }
    
