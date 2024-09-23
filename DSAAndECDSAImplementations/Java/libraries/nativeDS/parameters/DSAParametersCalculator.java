@@ -63,7 +63,7 @@ public class DSAParametersCalculator extends ParametersCalculator
                             .multiply(q.modInverse(field)).mod(field),
                             field
                         );
-        
+
         return new DSAParameterSpec(field, q, g);
     }
 

@@ -69,7 +69,7 @@ public class ECParametersCalculator extends ParametersCalculator
     @SuppressWarnings("unused")
     private ECPoint ecFieldFpCalculateGValue(ECParameterSpec ecParams)
     {
-        ParametersExtractor extractor = new ParametersExtractor();
+        DSAParametersExtractor extractor = new DSAParametersExtractor();
         extractor.extractFromParameterSpec(ecParams);
         BigInteger xCoordinate = ((ECPoint) extractor.getG()).getAffineX();
         BigInteger a = extractor.getA();
@@ -105,7 +105,7 @@ public class ECParametersCalculator extends ParametersCalculator
             return BigInteger.ONE;
         }
 
-        ParametersExtractor extractor = new ParametersExtractor();
+        DSAParametersExtractor extractor = new DSAParametersExtractor();
         extractor.extractFromParameterSpec(ecParams);
         BigInteger field = extractor.getP();
         BigInteger order = new BigInteger("2");

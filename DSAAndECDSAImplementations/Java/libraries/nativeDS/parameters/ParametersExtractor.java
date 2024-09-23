@@ -2,154 +2,134 @@ package DSAAndECDSAImplementations.Java.libraries.NativeDS.parameters;
 
 import java.math.BigInteger;
 import java.security.Key;
-import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
-import java.security.PublicKey;
 import java.security.spec.AlgorithmParameterSpec;
-import java.security.spec.DSAParameterSpec;
-import java.security.spec.DSAPublicKeySpec;
-import java.security.spec.ECFieldFp;
-import java.security.spec.ECParameterSpec;
-import java.security.spec.ECPublicKeySpec;
-import java.security.spec.EllipticCurve;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 
-public class ParametersExtractor implements AlgorithmParameterSpec{
-    
+public abstract class ParametersExtractor implements AlgorithmParameterSpec
+{
     private BigInteger a;
     private BigInteger b;
     private BigInteger p;
     private BigInteger q;
     private Object g;
+    private BigInteger x;
     private Object y;
 
-
-
-    public ParametersExtractor() {};
-
     /**
-     * Extracts parameters from a Key.
-     *  Afterwards they will be available different values depending on the subtype of the key:
-     * -dsa: p, q, g and y
-     * -ec: a, b, p, q, g and y
+     * Extracts parameters from a public Key.
+     * Some values will be updated depending on the subclass implementing this method.
      * 
-     * @param key The Key to extract informations from
-     * @param <T> The actual type of key in runtime
-     * @throws InvalidKeySpecException If the subtype of the key is not supported by the Java.Security
-     * @throws NoSuchAlgorithmException If the key's algorithm is not supported by the Java.Security
+     * @param key The Key to extract the informations from.
+     * @throws InvalidKeySpecException
+     * @throws NoSuchAlgorithmException
      */
-    public <T extends KeySpec> void extractFromKey(PublicKey key) throws InvalidKeySpecException, NoSuchAlgorithmException
-    {
-        DSAPublicKeySpec keySpec = KeyFactory.getInstance(key.getAlgorithm()).getKeySpec(key, DSAPublicKeySpec.class);
-        this.extractFromKeySpec(keySpec);
-    }
+    public abstract void extractFromPublicKey(Key publicKey) throws InvalidKeySpecException, NoSuchAlgorithmException;
 
     /**
-     * Extracts parameters from a dsa public Key spec.
-     *  Afterwards they will be available the p, q, g and y values.
+     * Extracts parameters from a private Key.
+     * Some values will be updated depending on the subclass implementing this method.
      * 
-     * @param key The DSAPublicKeySpec to extract informations from
+     * @param key The Key to extract the informations from.
+     * @throws InvalidKeySpecException
+     * @throws NoSuchAlgorithmException
      */
-    public void extractFromKeySpec(DSAPublicKeySpec key)
-    {
-        this.setValues(null, null, key.getP(), key.getQ(), key.getG(), key.getY());
-    }
+    public abstract void extractFromPrivateKey(Key privateKey) throws InvalidKeySpecException, NoSuchAlgorithmException;
 
     /**
-     * Extracts parameters from an ec public Key spec.
-     *  Afterwards they will be available the a, b, p, q, g and y values.
+     * Extracts parameters from a public Key spec.
+     * Some values will be updated depending on the subclass implementing this method.
      * 
-     * @param key The ECPublicKeySpec to extract informations from
+     * @param keySpec The KeySpec to extract informations from
      */
-    public void extractFromKeySpec(ECPublicKeySpec key)
-    {
-        this.setValues(key.getParams(), key.getW());
-    }
+    public abstract void extractFromPublicKeySpec(KeySpec publicKeySpec);
+    
+    /**
+     * Extracts parameters from a private Key spec.
+     * Some values will be updated depending on the subclass implementing this method.
+     * 
+     * @param keySpec The KeySpec to extract informations from
+     */
+    public abstract void extractFromPrivateKeySpec(KeySpec privateKeySpec);
 
     /**
-     * Extracts parameters from a dsa parameter spec.
-     *  Afterwards they will be available the p, q, and g values.
+     * Extracts parameters from a parameter spec.
+     * Some values will be updated depending on the subclass implementing this method.
      * 
      * @param params The DSAParameterSpec to extract informations from
      */
-    public void extractFromParameterSpec(DSAParameterSpec params)
-    {
-        this.setValues(null, null, params.getP(), params.getQ(), params.getG(), null);
-    }
+    public abstract void extractFromParameterSpec(AlgorithmParameterSpec params);
 
-    /**
-     * Extracts parameters from an ec parameter spec.
-     *  Afterwards they will be available the a, b, p, q, and g values.
-     * 
-     * @param params The DSAParameterSpec to extract informations from
-     */
-    public void extractFromParameterSpec(ECParameterSpec params)
-    {
-        if (!(params.getCurve().getField() instanceof ECFieldFp))
-        {
-            throw new UnsupportedOperationException("The private method 'ecPointDouble' has been implemented to work with an 'ECFieldFp' curve, not + "
-                                                        + params.getCurve().getField().getClass().toString());
-        }
-
-        this.setValues(params, null);
-    }
-
-
-    //private methods
-    private void setValues(ECParameterSpec params, Object y)
-    {
-        EllipticCurve eCurve = params.getCurve();
-        
-        this.setValues(eCurve.getA(), eCurve.getB(), ((ECFieldFp) eCurve.getField()).getP(), params.getOrder(), params.getGenerator(), y);
-    }
-
-    private void setValues(BigInteger a, BigInteger b, BigInteger p, BigInteger q, Object g, Object y)
+    //setters
+    public void setA(BigInteger a)
     {
         this.a = a;
-        this.b = b;
-        this.p = p;
-        this.q = q;
-        this.g = g;
-        this.y = y;
     }
 
+    public void setB(BigInteger b)
+    {
+        this.b = b;
+    }
+    
+    public void setP(BigInteger p)
+    {
+        this.p = p;
+    }
+    
+    public void setQ(BigInteger q)
+    {
+        this.q = q;
+    }
+    
+    public void setG(Object g)
+    {
+        this.g = g;
+    }
+    
+    public void setX(BigInteger x)
+    {
+        this.x = x;
+    }
+    
+    public void setY(Object y)
+    {
+        this.y = y;
+    }
 
     //getters
     public BigInteger getA()
     {
-        return a;
+        return this.a;    
     }
-
+    
     public BigInteger getB()
     {
-        return b;
+        return this.b;
     }
-
+    
     public BigInteger getP()
     {
-        return p;
+        return this.p;
     }
-
+    
     public BigInteger getQ()
     {
-        return q;
+        return this.q;
     }
-
+    
     public Object getG()
     {
-        return g;
+        return this.g;
+    }
+    
+    public BigInteger getX()
+    {
+        return this.x;
     }
 
     public Object getY()
     {
-        return y;
-    }
-
-    @Override
-    public String toString()
-    {
-        return "p:\n" + p + "\nq:\n" + q + "\ng:\n" + g;
+        return this.y;
     }
 }

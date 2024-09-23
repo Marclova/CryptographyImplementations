@@ -28,20 +28,20 @@ import java.math.BigInteger;
 import java.security.InvalidKeyException;
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.SignatureException;
 import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.DSAParameterSpec;
-import java.security.spec.DSAPublicKeySpec;
 import java.security.spec.ECFieldFp;
 import java.security.spec.ECParameterSpec;
 import java.security.spec.ECPoint;
-import java.security.spec.ECPublicKeySpec;
 import java.security.spec.EllipticCurve;
 import java.security.spec.InvalidKeySpecException;
 
 import DSAAndECDSAImplementations.Java.libraries.minorUtilities.BytesConsolePrinter;
 import DSAAndECDSAImplementations.Java.libraries.minorUtilities.ECPointConsolePrinter;
-import DSAAndECDSAImplementations.Java.libraries.NativeDS.parameters.ParametersExtractor;
+import DSAAndECDSAImplementations.Java.libraries.NativeDS.parameters.DSAParametersExtractor;
 import DSAAndECDSAImplementations.Java.libraries.NativeDS.util.OperationsManager;
 
 public class CustomParametersMain {
@@ -64,23 +64,20 @@ public class CustomParametersMain {
         //just to print on console
         BytesConsolePrinter bytePrinter = new BytesConsolePrinter();
         ECPointConsolePrinter ecPrinter = new ECPointConsolePrinter();
-        Object[] keySpecType = new Object[2];
 
         //#region choosing algorithm
-        short choice = 0;
+        short choice = 1;
         switch (choice) {
-            case 0:
+            case 1:
                 KeyPairGeneratorAlgorithmName = "DSA";
                 parameters = new DSAParameterSpec(pValue, qValue, null);
                 hashAlgorithmName = "SHA256withDSA";
-                keySpecType[choice] = DSAPublicKeySpec.class;
                 break;
             
-            case 1: //This will throw an 'UnsupportedOperationException'
+            case 2: //This will throw an 'UnsupportedOperationException'
                 KeyPairGeneratorAlgorithmName = "EC";
                 parameters = new ECParameterSpec(new EllipticCurve(new ECFieldFp(pValue), a, b), new ECPoint(BigInteger.ONE, BigInteger.ZERO), qValue, 1);
                 hashAlgorithmName = "SHA256withECDSA";
-                keySpecType[choice] = ECPublicKeySpec.class;
                 break;
 
             default:
@@ -98,20 +95,22 @@ public class CustomParametersMain {
 
         //calculating the key pair
         KeyPair keyPair = opManager.calculateKeyPair(privateKeyValue, parameters);
+        PrivateKey privateKey = keyPair.getPrivate();
+        PublicKey publicKey = keyPair.getPublic();
 
         //applying the file signature
-        byte[] generatedSignature = opManager.signFile(fileToSign, keyPair.getPrivate());
+        byte[] generatedSignature = opManager.signFile(fileToSign, privateKey);
 
         //verifying the file signature
-        boolean match = opManager.verifySignature(fileToSign, generatedSignature, keyPair.getPublic());
+        boolean match = opManager.verifySignature(fileToSign, generatedSignature, publicKey);
 
         
 
         //#region print commands
 
-        ParametersExtractor extractor = new ParametersExtractor();
-        
-        extractor.extractFromKey(keyPair.getPublic());
+        DSAParametersExtractor extractor = new DSAParametersExtractor();
+        extractor.extractFromPublicKey(publicKey);
+
         Object gValue = extractor.getG();
         Object yValue = extractor.getY();
 
