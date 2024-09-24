@@ -55,11 +55,13 @@ public class StandardParametersMain {
         }
         //#endregion
 
-        //generating a random key pair
-        keyPair = KeyPairGenerator.getInstance(KeyPairGeneratorAlgorithmName).generateKeyPair();
+        //settings end here. From here there's the executive part of the code.
 
         //initializing parameters manager
         opManager = new OperationsManager(KeyPairGeneratorAlgorithmName, hashAlgorithmName);
+
+        //generating a random key pair
+        keyPair = KeyPairGenerator.getInstance(KeyPairGeneratorAlgorithmName).generateKeyPair();
 
         //applying the file signature
         byte[] generatedSignature = opManager.signFile(FileToSign, keyPair.getPrivate());
