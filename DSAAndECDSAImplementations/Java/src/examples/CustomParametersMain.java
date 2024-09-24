@@ -28,8 +28,6 @@ import java.math.BigInteger;
 import java.security.InvalidKeyException;
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
-import java.security.PublicKey;
 import java.security.SignatureException;
 import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.DSAParameterSpec;
@@ -42,6 +40,8 @@ import java.security.spec.InvalidKeySpecException;
 import DSAAndECDSAImplementations.Java.libraries.minorUtilities.BytesConsolePrinter;
 import DSAAndECDSAImplementations.Java.libraries.minorUtilities.ECPointConsolePrinter;
 import DSAAndECDSAImplementations.Java.libraries.NativeDS.parameters.DSAParametersExtractor;
+import DSAAndECDSAImplementations.Java.libraries.NativeDS.parameters.ECParametersExtractor;
+import DSAAndECDSAImplementations.Java.libraries.NativeDS.parameters.ParametersExtractor;
 import DSAAndECDSAImplementations.Java.libraries.NativeDS.util.OperationsManager;
 
 public class CustomParametersMain {
@@ -57,59 +57,61 @@ public class CustomParametersMain {
         BigInteger b = new BigInteger("17");
         
         //generic parameters
-        AlgorithmParameterSpec parameters;
         String KeyPairGeneratorAlgorithmName;
         String hashAlgorithmName;
+        AlgorithmParameterSpec parameters;
+        OperationsManager opManager;
+        KeyPair keyPair;
 
         //just to print on console
         BytesConsolePrinter bytePrinter = new BytesConsolePrinter();
         ECPointConsolePrinter ecPrinter = new ECPointConsolePrinter();
+        ParametersExtractor extractor;
 
         //#region choosing algorithm
         short choice = 1;
         switch (choice) {
             case 1:
                 KeyPairGeneratorAlgorithmName = "DSA";
-                parameters = new DSAParameterSpec(pValue, qValue, null);
                 hashAlgorithmName = "SHA256withDSA";
+                parameters = new DSAParameterSpec(pValue, qValue, null);
+                extractor = new DSAParametersExtractor(); //just to print on console
                 break;
             
             case 2: //This will throw an 'UnsupportedOperationException'
                 KeyPairGeneratorAlgorithmName = "EC";
-                parameters = new ECParameterSpec(new EllipticCurve(new ECFieldFp(pValue), a, b), new ECPoint(BigInteger.ONE, BigInteger.ZERO), qValue, 1);
                 hashAlgorithmName = "SHA256withECDSA";
+                parameters = new ECParameterSpec(new EllipticCurve(new ECFieldFp(pValue), a, b),
+                                                    new ECPoint(BigInteger.ONE, BigInteger.ZERO), qValue, 1);
+                extractor = new ECParametersExtractor(); //just to print on console
                 break;
 
             default:
                 throw new IllegalArgumentException("invalid choice");
         }
         //#endregion
+
+        //settings end here. From here there's the executive part of the code.
         
         //initializing parameters manager
-        OperationsManager opManager = new OperationsManager(KeyPairGeneratorAlgorithmName, hashAlgorithmName);
-        
+        opManager = new OperationsManager(KeyPairGeneratorAlgorithmName, hashAlgorithmName);
 
-
-        //custom parameters initialization
+        //custom parameters calculation
         parameters = opManager.calculateGValueAndUpdateParamSpec(parameters);
 
-        //calculating the key pair
-        KeyPair keyPair = opManager.calculateKeyPair(privateKeyValue, parameters);
-        PrivateKey privateKey = keyPair.getPrivate();
-        PublicKey publicKey = keyPair.getPublic();
+        keyPair = opManager.calculateKeyPair(privateKeyValue, parameters);
 
         //applying the file signature
-        byte[] generatedSignature = opManager.signFile(fileToSign, privateKey);
+        byte[] generatedSignature = opManager.signFile(fileToSign, keyPair.getPrivate());
 
         //verifying the file signature
-        boolean match = opManager.verifySignature(fileToSign, generatedSignature, publicKey);
+        boolean match = opManager.verifySignature(fileToSign, generatedSignature, keyPair.getPublic());
 
         
 
         //#region print commands
 
-        DSAParametersExtractor extractor = new DSAParametersExtractor();
-        extractor.extractFromPublicKey(publicKey);
+        extractor.extractFromPublicKey(keyPair.getPublic());
 
         Object gValue = extractor.getG();
         Object yValue = extractor.getY();

@@ -6,8 +6,6 @@ import java.security.InvalidKeyException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
-import java.security.PublicKey;
 import java.security.SignatureException;
 import java.security.spec.ECPoint;
 import java.security.spec.InvalidKeySpecException;
@@ -29,6 +27,8 @@ public class StandardParametersMain {
         //generic parameters
         String KeyPairGeneratorAlgorithmName;
         String hashAlgorithmName;
+        OperationsManager opManager;
+        KeyPair keyPair;
 
         //just to print on console
         BytesConsolePrinter bytePrinter = new BytesConsolePrinter();
@@ -56,26 +56,23 @@ public class StandardParametersMain {
         //#endregion
 
         //generating a random key pair
-        KeyPairGenerator kPairGen = KeyPairGenerator.getInstance(KeyPairGeneratorAlgorithmName);
-        KeyPair kPair = kPairGen.generateKeyPair();
-        PrivateKey privateKey = kPair.getPrivate();
-        PublicKey publicKey = kPair.getPublic();
+        keyPair = KeyPairGenerator.getInstance(KeyPairGeneratorAlgorithmName).generateKeyPair();
 
         //initializing parameters manager
-        OperationsManager opManager = new OperationsManager(KeyPairGeneratorAlgorithmName, hashAlgorithmName);
+        opManager = new OperationsManager(KeyPairGeneratorAlgorithmName, hashAlgorithmName);
 
         //applying the file signature
-        byte[] generatedSignature = opManager.signFile(FileToSign, privateKey);
+        byte[] generatedSignature = opManager.signFile(FileToSign, keyPair.getPrivate());
 
         //verifying the file signature
-        boolean match = opManager.verifySignature(FileToSign, generatedSignature, publicKey);
+        boolean match = opManager.verifySignature(FileToSign, generatedSignature, keyPair.getPublic());
 
         
 
         //#region print commands
 
-        extractor.extractFromPublicKey(publicKey);
-        extractor.extractFromPrivateKey(privateKey);
+        extractor.extractFromPublicKey(keyPair.getPublic());
+        extractor.extractFromPrivateKey(keyPair.getPrivate());
 
         BigInteger pValue = extractor.getP();
         BigInteger qValue = extractor.getQ();
