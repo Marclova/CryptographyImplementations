@@ -10,9 +10,7 @@ import java.security.SignatureException;
 import java.security.spec.ECPoint;
 import java.security.spec.InvalidKeySpecException;
 
-import DSAAndECDSAImplementations.Java.libraries.NativeDS.parameters.DSAParametersExtractor;
-import DSAAndECDSAImplementations.Java.libraries.NativeDS.parameters.ECParametersExtractor;
-import DSAAndECDSAImplementations.Java.libraries.NativeDS.parameters.ParametersExtractor;
+import DSAAndECDSAImplementations.Java.libraries.NativeDS.parameters.extraction.*;
 import DSAAndECDSAImplementations.Java.libraries.NativeDS.util.OperationsManager;
 import DSAAndECDSAImplementations.Java.libraries.minorUtilities.BytesConsolePrinter;
 import DSAAndECDSAImplementations.Java.libraries.minorUtilities.ECPointConsolePrinter;
@@ -28,7 +26,6 @@ public class StandardParametersMain {
         String KeyPairGeneratorAlgorithmName;
         String hashAlgorithmName;
         OperationsManager opManager;
-        KeyPair keyPair;
 
         //just to print on console
         BytesConsolePrinter bytePrinter = new BytesConsolePrinter();
@@ -41,13 +38,13 @@ public class StandardParametersMain {
             case 1:
                 KeyPairGeneratorAlgorithmName = "DSA";
                 hashAlgorithmName = "SHA256withDSA";
-                extractor = new DSAParametersExtractor();
+                extractor = new DSAParametersExtractor(); //Just to print on console
                 break;
 
             case 2:
                 KeyPairGeneratorAlgorithmName = "EC";
                 hashAlgorithmName = "SHA256withECDSA";
-                extractor = new ECParametersExtractor();
+                extractor = new ECParametersExtractor(); //Just to print on console
                 break;
         
             default:
@@ -61,7 +58,7 @@ public class StandardParametersMain {
         opManager = new OperationsManager(KeyPairGeneratorAlgorithmName, hashAlgorithmName);
 
         //generating a random key pair
-        keyPair = KeyPairGenerator.getInstance(KeyPairGeneratorAlgorithmName).generateKeyPair();
+        KeyPair keyPair = KeyPairGenerator.getInstance(KeyPairGeneratorAlgorithmName).generateKeyPair();
 
         //applying the file signature
         byte[] generatedSignature = opManager.signFile(FileToSign, keyPair.getPrivate());

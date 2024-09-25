@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package DSAAndECDSAImplementations.Java.libraries.NativeDS.parameters;
+package DSAAndECDSAImplementations.Java.libraries.NativeDS.parameters.calculation;
 
 import java.math.BigInteger;
 import java.security.spec.AlgorithmParameterSpec;

@@ -1,4 +1,4 @@
-package DSAAndECDSAImplementations.Java.libraries.NativeDS.parameters;
+package DSAAndECDSAImplementations.Java.libraries.NativeDS.parameters.extraction;
 
 import java.security.Key;
 import java.security.KeyFactory;

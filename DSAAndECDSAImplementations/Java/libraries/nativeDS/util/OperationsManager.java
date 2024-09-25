@@ -12,7 +12,7 @@ import java.security.SignatureException;
 import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.InvalidKeySpecException;
 
-import DSAAndECDSAImplementations.Java.libraries.NativeDS.parameters.ParametersCalculator;
+import DSAAndECDSAImplementations.Java.libraries.NativeDS.parameters.calculation.ParametersCalculator;
 
 public class OperationsManager
 {
@@ -47,7 +47,9 @@ public class OperationsManager
         PrivateKey privateKey = this.keyFactory.generatePrivate(
                                     this.pCalculator.calculatePrivateKeySpec(privateKeyValue, params)
                                 );
-        PublicKey publicKey = this.keyFactory.generatePublic(pCalculator.calculatePublicKeySpec(privateKeyValue, params));
+        PublicKey publicKey = this.keyFactory.generatePublic(
+                                pCalculator.calculatePublicKeySpec(privateKeyValue, params)
+                            );
 
         return new KeyPair(publicKey, privateKey);
     }

@@ -39,9 +39,7 @@ import java.security.spec.InvalidKeySpecException;
 
 import DSAAndECDSAImplementations.Java.libraries.minorUtilities.BytesConsolePrinter;
 import DSAAndECDSAImplementations.Java.libraries.minorUtilities.ECPointConsolePrinter;
-import DSAAndECDSAImplementations.Java.libraries.NativeDS.parameters.DSAParametersExtractor;
-import DSAAndECDSAImplementations.Java.libraries.NativeDS.parameters.ECParametersExtractor;
-import DSAAndECDSAImplementations.Java.libraries.NativeDS.parameters.ParametersExtractor;
+import DSAAndECDSAImplementations.Java.libraries.NativeDS.parameters.extraction.*;
 import DSAAndECDSAImplementations.Java.libraries.NativeDS.util.OperationsManager;
 
 public class CustomParametersMain {
@@ -61,7 +59,6 @@ public class CustomParametersMain {
         String hashAlgorithmName;
         AlgorithmParameterSpec parameters;
         OperationsManager opManager;
-        KeyPair keyPair;
 
         //just to print on console
         BytesConsolePrinter bytePrinter = new BytesConsolePrinter();
@@ -99,7 +96,7 @@ public class CustomParametersMain {
         //custom parameters calculation
         parameters = opManager.calculateGValueAndUpdateParamSpec(parameters);
 
-        keyPair = opManager.calculateKeyPair(privateKeyValue, parameters);
+        KeyPair keyPair = opManager.calculateKeyPair(privateKeyValue, parameters);
 
         //applying the file signature
         byte[] generatedSignature = opManager.signFile(fileToSign, keyPair.getPrivate());

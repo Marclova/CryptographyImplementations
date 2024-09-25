@@ -1,4 +1,4 @@
-package DSAAndECDSAImplementations.Java.libraries.NativeDS.parameters;
+package DSAAndECDSAImplementations.Java.libraries.NativeDS.parameters.extraction;
 
 import java.math.BigInteger;
 import java.security.Key;

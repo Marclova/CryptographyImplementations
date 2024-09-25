@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package DSAAndECDSAImplementations.Java.libraries.NativeDS.parameters;
+package DSAAndECDSAImplementations.Java.libraries.NativeDS.parameters.calculation;
 
 import java.math.BigInteger;
 import java.security.spec.AlgorithmParameterSpec;
@@ -31,6 +31,7 @@ import java.security.spec.ECPoint;
 import java.security.spec.ECPrivateKeySpec;
 import java.security.spec.ECPublicKeySpec;
 
+import DSAAndECDSAImplementations.Java.libraries.NativeDS.parameters.extraction.ECParametersExtractor;
 import DSAAndECDSAImplementations.Java.libraries.NativeDS.util.SecureRandomNumberGenerator;
 //optional import
 import DSAAndECDSAImplementations.Java.libraries.minorUtilities.BytesConsolePrinter;
