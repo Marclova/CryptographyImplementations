@@ -88,7 +88,7 @@ public class CustomParametersMain {
         }
         //#endregion
 
-        //settings end here. From here there's the executive part of the code.
+        //#region sign application
         
         //initializing parameters manager
         opManager = new OperationsManager(KeyPairGeneratorAlgorithmName, hashAlgorithmName);
@@ -104,7 +104,7 @@ public class CustomParametersMain {
         //verifying the file signature
         boolean match = opManager.verifySignature(fileToSign, generatedSignature, keyPair.getPublic());
 
-        
+        //#endregion
 
         //#region print commands
 

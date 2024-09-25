@@ -56,16 +56,12 @@ int main()
     mpiSetValue(&params.b, B_VARIABLE);
     mpiSetValue(&params.p, FIELD_LIMIT);
     mpiSetValue(&params.g.x, G_POINT_X_COORDINATE);
+
+    #pragma region sign application
+
+    //calculating G point and its order
     ecGenerateCurvePoint(&params, &params.g.x, &params.g);
     ecCalculatePointOrder(&params, &params.g, &params.q);
-    printf("Given public curve function variable 'a': %d\n", params.a.data[0]);
-    printf("Given public curve function variable 'b': %d\n", params.b.data[0]);
-    printf("Given public prime field limit 'p': %d\n", params.p.data[0]);
-    printf("Given public 'x coordinate' of the generator point 'G': %d\n", params.g.x.data[0]);
-    printf("Calculated public 'y coordinate' of the generator point 'G': %d\n", params.g.y.data[0]);
-    printf("Calculated public generator point 'G' order and used as module 'q': %d\n", params.q.data[0]);
-
-    printf("\n");
 
     //generate key pairs
     EcPrivateKey privK;
@@ -73,10 +69,6 @@ int main()
     EcPublicKey pubK;
     ecInitPublicKey(&pubK);
     ecGenerateKeyPair(&yarrowPrngAlgo, &yContext, &params, &privK, &pubK);
-    printf("Extracted private key 'd': %d\n", privK.d.data[0]);
-    printf("Generated public key 'Q' (x,y): ( %d , %d )\n", pubK.q.x.data[0], pubK.q.y.data[0]);
-
-    printf("\n");
 
     //generate signature
     uint8_t digest[SHA256_DIGEST_SIZE];
@@ -86,13 +78,42 @@ int main()
     error_t error; // necessary to loop attempts
     error = ecdsaGenerateSignature(&yarrowPrngAlgo, &yContext, &params, &privK, digest, sizeof(digest), &sign);
     
-    printf("Generated signature (r,s): ( %d , %d )\n", sign.r.data[0], sign.s.data[0]);    
-    printf("\n");
 
     //Converting the signature into a format fit to be sent (such as an uint8_t array)
     uint8_t buffer[sizeof(&params.q.data)];
     size_t bufferSize = sizeof(buffer);
     ecdsaWriteSignature(&sign, buffer, &bufferSize);
+
+
+    //reconverting the signature into a 'DsaSignature'
+    EcdsaSignature receivedSignature;
+    ecdsaInitSignature(&receivedSignature);
+    ecdsaReadSignature(buffer, bufferSize, &receivedSignature);
+
+    // Verifying the generated signature (avoiding to hash the data yet again in this demonstration)
+    error = ecdsaVerifySignature(&params, &pubK, digest, sizeof(digest), &receivedSignature);
+
+    #pragma endregion
+
+    #pragma region print commands
+
+    printf("Given public curve function variable 'a': %d\n", params.a.data[0]);
+    printf("Given public curve function variable 'b': %d\n", params.b.data[0]);
+    printf("Given public prime field limit 'p': %d\n", params.p.data[0]);
+    printf("Given public 'x coordinate' of the generator point 'G': %d\n", params.g.x.data[0]);
+    printf("Calculated public 'y coordinate' of the generator point 'G': %d\n", params.g.y.data[0]);
+    printf("Calculated public generator point 'G' order and used as module 'q': %d\n", params.q.data[0]);
+    printf("\n");
+    
+    printf("Extracted private key 'd': %d\n", privK.d.data[0]);
+    printf("Generated public key 'Q' (x,y): ( %d , %d )\n", pubK.q.x.data[0], pubK.q.y.data[0]);
+    printf("\n");
+
+    printf("Generated signature (r,s): ( %d , %d )\n", sign.r.data[0], sign.s.data[0]);
+    printf("\n");
+
+    printf("- simulating the sending of the buffered signature, the parameters, the data and public key to the other person -\n\n");
+
     printf("Sent signature value (hex): ");
     for (size_t i = 0; i < sizeof(buffer); i++)
     {
@@ -100,19 +121,7 @@ int main()
     }
     printf("\n\n");
 
-    ecFreePrivateKey(&privK);
-    ecdsaFreeSignature(&sign);
-
-    printf("- simulating the sending of the buffered signature, the parameters, the data and public key to the other person -\n\n");
-
-    //reconverting the signature into a 'DsaSignature'
-    EcdsaSignature receivedSignature;
-    ecdsaInitSignature(&receivedSignature);
-    ecdsaReadSignature(buffer, bufferSize, &receivedSignature);
     printf("checking signature...\n");
-
-    // Verifying the generated signature (avoiding to hash the data yet again in this demonstration)
-    error = ecdsaVerifySignature(&params, &pubK, digest, sizeof(digest), &receivedSignature);
     if(error == NO_ERROR)
     {
         printf("Signature verified!");
@@ -123,6 +132,10 @@ int main()
         printf("error code: %d", error);
     }
 
+    #pragma endregion
+
+    ecFreePrivateKey(&privK);
+    ecdsaFreeSignature(&sign);
     ecFreeDomainParameters(&params);
     ecFreePublicKey(&pubK);
     ecdsaFreeSignature(&receivedSignature);

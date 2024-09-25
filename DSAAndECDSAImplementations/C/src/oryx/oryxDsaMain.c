@@ -48,33 +48,26 @@ int main()
     dsaInitDomainParameters(&params);
     mpiSetValue(&params.p, DSA_PRIME_VALUE);
     mpiSetValue(&params.q, DSA_MODULE);
-    printf("Given public prime value 'p': %d\n", params.p.data[0]);
-    printf("Given public module 'q': %d\n", params.q.data[0]);
 
     Mpi h;
     mpiInit(&h);
     mpiSetValue(&h, ((rand() % (DSA_PRIME_VALUE-3)) + 2) );
-    printf("\nExtracted secret parameter 'h': %d\n", h.data[0]);
 
+    #pragma region sign application
+
+    //calculating generator
     dsaGenerateGValue(&params.g, &params, &h);
-    printf("Generated public generator value 'g': %u\n", params.g.data[0]);
-
-    printf("\n");
 
     // Initializing the private key
     DsaPrivateKey privK;
     dsaInitPrivateKey(&privK);
     dsaDomainParametersCopy(&privK.params, &params);
     mpiSetValue(&privK.x, DSA_PRIVATE_KEY_VALUE);
-    printf("Given private key 'x': %d\n", privK.x.data[0]);
 
     // Generating the public key
     DsaPublicKey pubK;
     dsaInitPublicKey(&pubK);
     dsaGeneratePublicKey(&pubK, &privK);
-    printf("Generated public key 'y': %d\n", pubK.y.data[0]);
-
-    printf("\n");
 
     // Signing the given data
     uint8_t digest[SHA256_DIGEST_SIZE];
@@ -82,28 +75,12 @@ int main()
     DsaSignature sign;
     dsaInitSignature(&sign);
     dsaGenerateSignature(&yarrowPrngAlgo, &yContext, &privK, digest, sizeof(digest), &sign);
-    printf("Generated signature (r,s): (%u , %u)", sign.r.data[0], sign.s.data[0]);
-
-    printf("\n");
 
     //Converting the signature into a format fit to be sent (such as an uint8_t array)
     uint8_t buffer[sizeof(&params.q.data)];
     size_t bufferSize = sizeof(buffer);
     dsaWriteSignature(&sign, buffer, &bufferSize);  //can't use 'sizeof(buffer)' here because a pointer is required
-    printf("Sent signature value (hex): ");
-    for (size_t i = 0; i < sizeof(buffer); i++)
-    {
-        printf("%x ", buffer[i]);
-    }
-    printf("\n\n");
 
-    mpiFree(&h);
-    dsaFreeDomainParameters(&params);
-    dsaFreePrivateKey(&privK);
-    dsaFreeSignature(&sign);
-
-
-    printf("- simulating the sending of the buffered signature, the data and public key to the other person -\n\n");
 
     //reconverting the signature into a 'DsaSignature'
     DsaSignature receivedSignature;
@@ -113,6 +90,33 @@ int main()
     printf("checking signature...\n");
     // Verifying the generated signature (avoiding to hash the data yet again in this demonstration)
     error_t error = dsaVerifySignature(&pubK, digest, sizeof(digest), &receivedSignature);
+    
+    #pragma endregion
+
+    #pragma region print commands
+
+    printf("Given public prime value 'p': %d\n", params.p.data[0]);
+    printf("Given public module 'q': %d\n", params.q.data[0]);
+    printf("\nExtracted secret parameter 'h': %d\n", h.data[0]);
+    printf("Generated public generator value 'g': %u\n", params.g.data[0]);
+    printf("\n");
+
+    printf("Generated signature (r,s): (%u , %u)", sign.r.data[0], sign.s.data[0]);
+    printf("\n");
+
+    printf("Given private key 'x': %d\n", privK.x.data[0]);
+    printf("Generated public key 'y': %d\n", pubK.y.data[0]);
+    printf("\n");
+
+    printf("- simulating the sending of the buffered signature, the data and public key to the other person -\n\n");
+
+    printf("Sent signature value (hex): ");
+    for (size_t i = 0; i < sizeof(buffer); i++)
+    {
+        printf("%x ", buffer[i]);
+    }
+    printf("\n\n");
+
     if(error == NO_ERROR)
     {
         printf("Signature verified!");
@@ -122,8 +126,13 @@ int main()
         printf("Signature not recognised...\n");
         printf("error code: %d", error);
     }
-    
 
+    #pragma endregion
+
+    mpiFree(&h);
+    dsaFreeDomainParameters(&params);
+    dsaFreePrivateKey(&privK);
+    dsaFreeSignature(&sign);
     dsaFreeSignature(&receivedSignature);
     dsaFreePublicKey(&pubK);
     yarrowDeinit(&yContext);
