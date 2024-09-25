@@ -31,7 +31,8 @@
 //low sample values
 #define DSA_PRIME_VALUE 107
 #define DSA_MODULE 53
-#define DSA_PRIVATE_KEY_VALUE 34
+
+#define PRIVATE_KEY_VALUE 34
 #define FILE_TO_SIGN "hello world!"
 
 int main()
@@ -43,7 +44,7 @@ int main()
     yarrowInit(&yContext);
     yarrowSetSimpleTimePRSeed(&yContext);
 
-    // Initialing the DSA variables 'p', 'q', 'h', and 'g'
+    // Initialing the DSA variables 'p', 'q', and 'h'
     DsaDomainParameters params;
     dsaInitDomainParameters(&params);
     mpiSetValue(&params.p, DSA_PRIME_VALUE);
@@ -51,7 +52,7 @@ int main()
 
     Mpi h;
     mpiInit(&h);
-    mpiSetValue(&h, ((rand() % (DSA_PRIME_VALUE-3)) + 2) );
+    mpiRandRange(&h, &params.p, &yarrowPrngAlgo, &yContext);
 
     #pragma region sign application
 
@@ -62,7 +63,7 @@ int main()
     DsaPrivateKey privK;
     dsaInitPrivateKey(&privK);
     dsaDomainParametersCopy(&privK.params, &params);
-    mpiSetValue(&privK.x, DSA_PRIVATE_KEY_VALUE);
+    mpiSetValue(&privK.x, PRIVATE_KEY_VALUE);
 
     // Generating the public key
     DsaPublicKey pubK;

@@ -38,6 +38,7 @@
 #define B_VARIABLE 17
 #define G_POINT_X_COORDINATE 94
 
+#define PRIVATE_KEY_VALUE 34
 #define FILE_TO_SIGN "hello world!"
 
 int main()
@@ -66,9 +67,10 @@ int main()
     //generate key pairs
     EcPrivateKey privK;
     ecInitPrivateKey(&privK);
+    mpiSetValue(&privK.d, PRIVATE_KEY_VALUE);
     EcPublicKey pubK;
     ecInitPublicKey(&pubK);
-    ecGenerateKeyPair(&yarrowPrngAlgo, &yContext, &params, &privK, &pubK);
+    ecGeneratePublicKey(&params, &privK, &pubK);
 
     //generate signature
     uint8_t digest[SHA256_DIGEST_SIZE];
@@ -105,7 +107,7 @@ int main()
     printf("Calculated public generator point 'G' order and used as module 'q': %d\n", params.q.data[0]);
     printf("\n");
     
-    printf("Extracted private key 'd': %d\n", privK.d.data[0]);
+    printf("Given private key 'd': %d\n", privK.d.data[0]);
     printf("Generated public key 'Q' (x,y): ( %d , %d )\n", pubK.q.x.data[0], pubK.q.y.data[0]);
     printf("\n");
 
