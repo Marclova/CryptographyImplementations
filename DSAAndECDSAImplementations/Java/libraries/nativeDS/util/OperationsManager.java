@@ -21,7 +21,8 @@ public class OperationsManager
     private Signature signatureManager;
     private SecureRandomNumberGenerator srng;
 
-    public OperationsManager(String KeyPairGeneratorAlgorithmName, String hashAlgorithmName) throws NoSuchAlgorithmException
+    public OperationsManager(String KeyPairGeneratorAlgorithmName, String hashAlgorithmName)
+        throws NoSuchAlgorithmException
     {
         this.keyFactory = KeyFactory.getInstance(KeyPairGeneratorAlgorithmName);
         this.pCalculator = ParametersCalculator.simpleGetInstance(KeyPairGeneratorAlgorithmName);

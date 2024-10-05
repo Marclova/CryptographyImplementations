@@ -33,7 +33,7 @@ public class StandardParametersMain {
         ParametersExtractor extractor;
 
         //#region choosing algorithm
-        short choice = 1;
+        short choice = 2;
         switch (choice) {
             case 1:
                 KeyPairGeneratorAlgorithmName = "DSA";

@@ -87,7 +87,7 @@ public class ECParametersExtractor extends ParametersExtractor
         ECPublicKeySpec ecPublicKeySpec = (ECPublicKeySpec) publicKeySpec;
         ECParameterSpec ecParamSpec = ecPublicKeySpec.getParams();
         
-        this.extractFromParameterSpec(ecParamSpec); //sets p, q and g
+        this.extractFromECFieldFpParameterSpec(ecParamSpec); //sets p, q and g
         this.setY(ecPublicKeySpec.getW());
     }
 
@@ -107,7 +107,7 @@ public class ECParametersExtractor extends ParametersExtractor
         ECPrivateKeySpec ecPrivateKeySpec = (ECPrivateKeySpec) privateKeySpec;
         ECParameterSpec ecParamSpec = ecPrivateKeySpec.getParams();
         
-        this.extractFromParameterSpec(ecParamSpec); //sets p, q and g
+        this.extractFromECFieldFpParameterSpec(ecParamSpec); //sets p, q and g
         this.setX(ecPrivateKeySpec.getS());
     }
 
@@ -119,7 +119,7 @@ public class ECParametersExtractor extends ParametersExtractor
      * @param paramSpec The ECParameterSpec to extract informations from
      */
     @Override
-    public void extractFromParameterSpec(AlgorithmParameterSpec paramSpec)
+    public void extractFromECFieldFpParameterSpec(AlgorithmParameterSpec paramSpec)
     {
         if (!(paramSpec instanceof ECParameterSpec))
         {
@@ -130,7 +130,7 @@ public class ECParametersExtractor extends ParametersExtractor
 
         if (!(ellipticCurve.getField() instanceof ECFieldFp))
         {
-            throw new UnsupportedOperationException("The private method 'ecPointDouble' has been implemented to work with an 'ECFieldFp' curve, not + "
+            throw new UnsupportedOperationException("The method 'extractFromECFieldFpParameterSpec' has been implemented to work with an 'ECFieldFp' curve, not + "
                                                         + ellipticCurve.getField().getClass());
         }
 
@@ -139,6 +139,11 @@ public class ECParametersExtractor extends ParametersExtractor
         this.setP(((ECFieldFp) ellipticCurve.getField()).getP());
         this.setQ(ecParamSpec.getOrder());
         this.setG(ecParamSpec.getGenerator());
+    }
+
+    public boolean isECFieldFp(ECParameterSpec ecParamSpec)
+    {
+        return (ecParamSpec.getCurve().getField() instanceof ECFieldFp);
     }
 
     //setters

@@ -114,7 +114,7 @@ public class DSAParametersExtractor extends ParametersExtractor
      * @param paramSpec The DSAParameterSpec to extract informations from
      */
     @Override
-    public void extractFromParameterSpec(AlgorithmParameterSpec paramSpec)
+    public void extractFromECFieldFpParameterSpec(AlgorithmParameterSpec paramSpec)
     {
         if (!(paramSpec instanceof DSAParameterSpec))
         {

@@ -31,10 +31,9 @@ import java.security.spec.ECPoint;
 import java.security.spec.ECPrivateKeySpec;
 import java.security.spec.ECPublicKeySpec;
 
+import DSAAndECDSAImplementations.Java.libraries.notOfficialImports.ashu_tosh_kumar.TonelliShanks;
 import DSAAndECDSAImplementations.Java.libraries.NativeDS.parameters.extraction.ECParametersExtractor;
 import DSAAndECDSAImplementations.Java.libraries.NativeDS.util.SecureRandomNumberGenerator;
-//optional import
-import DSAAndECDSAImplementations.Java.libraries.minorUtilities.BytesConsolePrinter;
 
 /**
  * This class doesn't work due two few not-implemented methods
@@ -53,25 +52,26 @@ public class ECParametersCalculator extends ParametersCalculator
     @Override
     public ECParameterSpec calculateGValueAndUpdateParameterSpec(AlgorithmParameterSpec params, SecureRandomNumberGenerator srg)
     {
-        // if (!(params instanceof ECParameterSpec))
-        // {
-        //     throw new IllegalArgumentException("The method 'calculatePublicKey' requires a ECParameterSpec, but received a "
-        //                                         + params.getClass() + " instead.");
-        // }
+        if (!(params instanceof ECParameterSpec))
+        {
+            throw new IllegalArgumentException("The method 'calculatePublicKey' requires a ECParameterSpec, but received a "
+                                                + params.getClass() + " instead.");
+        }
         
-        // ECParameterSpec ecParams = (ECParameterSpec) params;
+        ECParameterSpec ecParams = (ECParameterSpec) params;
 
-        // ECPoint g = ecFieldFpCalculateGValue(ecParams);
+        ECPoint g = this.ecFieldFpCalculateGValue(ecParams);
+        return new ECParameterSpec(ecParams.getCurve(), g, ecParams.getOrder(), 1);
 
-        // return new ECParameterSpec(ecParams.getCurve(), g, ecParams.getOrder(), 1);
-        throw new UnsupportedOperationException();
+        // BigInteger gOrder = this.calculatePointOrder(g, ecParams);
+        // return new ECParameterSpec(ecParams.getCurve(), g, gOrder, 1);
     }
 
-    @SuppressWarnings("unused")
-    private ECPoint ecFieldFpCalculateGValue(ECParameterSpec ecParams)
+    public ECPoint ecFieldFpCalculateGValue(ECParameterSpec ecParams)
     {
         ECParametersExtractor extractor = new ECParametersExtractor();
-        extractor.extractFromParameterSpec(ecParams);
+        extractor.extractFromECFieldFpParameterSpec(ecParams);
+
         BigInteger xCoordinate = ((ECPoint) extractor.getG()).getAffineX();
         BigInteger a = extractor.getA();
         BigInteger b = extractor.getB();
@@ -83,46 +83,65 @@ public class ECParametersCalculator extends ParametersCalculator
         BigInteger yCoordinateSquare = xCoordinate.modPow(new BigInteger("3"), field)
                                     .add(
                                         a.multiply(xCoordinate).mod(field)
-                                    ).add(b).mod(field);
-        BigInteger yCoordinate = yCoordinateSquare.sqrt();
-        
-        //verification of the square root
-        if (yCoordinate.pow(2).compareTo(yCoordinateSquare) != 0) //if y^2 != ySquare
-        {
-            BytesConsolePrinter printer = new BytesConsolePrinter();
-            throw new IllegalArgumentException("The given 'x' coordinate (" + printer.byteArrayToString(xCoordinate.toByteArray()) +
-                                                ") doesn't generate a valid 'y' in the curve");
-        }
+                                    ).mod(field)
+                                    .add(b).mod(field);
+
+        BigInteger yCoordinate = TonelliShanks.tonelliShanks(yCoordinateSquare, field);
 
         return new ECPoint(xCoordinate, yCoordinate);
-    }    
+    }
 
     public BigInteger calculatePointOrder(ECPoint point, ECParameterSpec ecParams)
     {
-        ECPoint rPoint = this.ecFieldFpPointDouble(point, ecParams);
+        // ECPoint rPoint = this.ecFieldFpPointDouble(point, ecParams);
 
-        if (rPoint.equals(point))  // (point + point = point) => point is already a point to infinity
-        {
-            return BigInteger.ONE;
-        }
+        // if (rPoint.equals(point))  // (point + point = point) => point is already a point to infinity
+        // {
+        //     return BigInteger.ONE;
+        // }
 
-        ECParametersExtractor extractor = new ECParametersExtractor();
-        extractor.extractFromParameterSpec(ecParams);
-        BigInteger field = extractor.getP();
-        BigInteger order = new BigInteger("2");
+        // ECParametersExtractor extractor = new ECParametersExtractor();
+        // extractor.extractFromParameterSpec(ecParams);
+        // BigInteger field = extractor.getP();
+        // BigInteger order = new BigInteger("2");
 
-        while (!(rPoint.equals(point)))  // continue until (rPoint + point = point)
-        {
-            if (order.compareTo(field) == 0)
-            {
-                throw new IllegalArgumentException("The point (" + point.getAffineX() + ", " + point.getAffineY() + ") has no valid order.");
-            }
-            rPoint = this.ecFieldFpPointSum(rPoint, point, ecParams);
-            order = order.add(BigInteger.ONE);
-        }
+        // while (!(rPoint.equals(point)))  // continue until (rPoint + point = point)
+        // {
+        //     if (order.compareTo(field) == 0)
+        //     {
+        //         throw new IllegalArgumentException("The point (" + point.getAffineX() + ", " + point.getAffineY() + ") has no valid order.");
+        //     }
+        //     rPoint = this.ecFieldFpPointSum(rPoint, point, ecParams);
+        //     order = order.add(BigInteger.ONE);
+        // }
 
-        return order.subtract(BigInteger.ONE);
-        // throw new UnsupportedOperationException("Method 'calculateGValueAndUpdateParamSpec' is unimplemented because projective coordinates are mind-boggling!");
+        // return order.subtract(BigInteger.ONE);
+        // // throw new UnsupportedOperationException("Method 'calculateGValueAndUpdateParamSpec' is unimplemented because projective coordinates are mind-boggling!");
+        // ECProjectivePoint actualProjectivePoint = new ECProjectivePoint(point);
+        // BigInteger order = BigInteger.ONE;
+ 
+        // if (actualProjectivePoint.isPointToInfinity())
+        // {
+        //     return order;
+        // }
+
+        // ECParametersExtractor ecExtractor = new ECParametersExtractor();
+        // ecExtractor.extractFromECFieldFpParameterSpec(ecParams);
+        // BigInteger field = ecExtractor.getP();
+        // ECProjectivePoint previousProjectivePoint = actualProjectivePoint.clone();
+
+        // while (!(actualProjectivePoint.isPointToInfinity()))
+        // {
+        //     actualProjectivePoint = this.ecFieldFpPointSum(actualProjectivePoint, previousProjectivePoint, ecParams);
+        //     order = order.add(BigInteger.ONE);
+            
+        //     if (order.compareTo(field) == 0)
+        //     {
+        //         throw new ArithmeticException("The order can't be equal or higher than the field.");
+        //     }
+        // }
+
+        throw new UnsupportedOperationException("Didn't found an optimization to calculate it in a reasonable time.");
     }
 
     public ECPrivateKeySpec calculatePrivateKeySpec(byte[] privateKeyValue, AlgorithmParameterSpec params)
@@ -170,20 +189,14 @@ public class ECParametersCalculator extends ParametersCalculator
     {
         BigInteger privKValue = new BigInteger(privateKeyValue);
 
-        if (privKValue.compareTo(new BigInteger("2")) == -1)
+        if (privKValue.compareTo(BigInteger.TWO) == -1)
         {
             throw new IllegalArgumentException("private key can't be less or equal one");
         }
 
-        ECPoint gPoint = ecParams.getGenerator();
+        ECProjectivePoint gPoint = new ECProjectivePoint(ecParams.getGenerator());
 
-        ECPoint pubK = this.ecFieldFpPointDouble(gPoint, ecParams);
-        privKValue = privKValue.subtract(new BigInteger("2"));  //with the double of the point two iterations has been spent
-        
-        while (privKValue.compareTo(BigInteger.ZERO) != 0) {
-            pubK = this.ecFieldFpPointSum(pubK, gPoint, ecParams);
-            privKValue.subtract(BigInteger.ONE);
-        }
+        ECProjectivePoint pubK = doubleAndADDPointSum(gPoint, privKValue, ecParams);
 
         return new ECPublicKeySpec(pubK, ecParams);
     }
@@ -195,34 +208,67 @@ public class ECParametersCalculator extends ParametersCalculator
      * @param ecParams The ECParameterSpec parameters used to calculate the result
      * @return The ECPoint resulting from the operation "2P = R"
      */
-    public ECPoint ecFieldFpPointDouble(ECPoint pointToDouble, ECParameterSpec ecParams)
+    public ECProjectivePoint ecFieldFpPointDouble(ECProjectivePoint pointToDouble, ECParameterSpec ecParams)
     {
-        // BigInteger xP = pointToDouble.getAffineX();
-        // BigInteger yP = pointToDouble.getAffineY();
-        // ECParameterSpecExtractor pProv = new ECParameterSpecExtractor(ecParams);
-        // BigInteger a = pProv.getA();
-        // BigInteger field = pProv.getP();
-        // BigInteger two = new BigInteger("2");
-        
-        // //compute s = ( 3*xP^2 + a ) / (2*yP) (mod p)
-        // BigInteger s = xP.modPow(two, field)
-        //                 .multiply(new BigInteger("3")).mod(field)
-        //                 .add(a).mod(field)
-        //                 .multiply(  //multiply with the multiplicative inverse
-        //                     yP.multiply(two).modInverse(field)
-        //                 ).mod(field);
-        // //compute xR = s^2 – 2*xP (mod p)
-        // BigInteger xR = s.modPow(two, field)
-        //                 .subtract(
-        //                     xP.multiply(two).mod(field)
-        //                 ).mod(field);
-        // //compute yR = s * (xP - xR) - yP (mod p)
-        // BigInteger yR = xP.subtract(xR).mod(field)
-        //                 .multiply(s).mod(field)
-        //                 .subtract(yP).mod(field);
+        if (pointToDouble.isPointToInfinity())
+        {
+            return pointToDouble;
+        }
 
-        // return new ECPoint(xR, yR);
-        throw new UnsupportedOperationException();
+        ECParametersExtractor ecExtractor = new ECParametersExtractor();
+        ecExtractor.extractFromECFieldFpParameterSpec(ecParams);
+
+        BigInteger four = BigInteger.valueOf(4);
+        BigInteger eight = BigInteger.valueOf(8);
+        BigInteger a = ecExtractor.getA();
+        BigInteger field = ecExtractor.getP();
+        BigInteger xR = pointToDouble.getProjectiveX();
+        BigInteger yR = pointToDouble.getProjectiveY();
+        BigInteger zR = pointToDouble.getProjectiveZ();
+
+        //compute A = zR^4 * a
+        BigInteger aValue = zR.modPow(four, field);
+        aValue = modIfNecessary(aValue.multiply(a), field);
+
+        //compute B = xR^2
+        BigInteger bValue = xR.modPow(BigInteger.TWO, field);
+
+        //compute A = A + (3 * B)
+        aValue = modIfNecessary(aValue.add(
+                                    bValue.multiply(BigInteger.valueOf(3)))
+                , field);
+        
+        //compute zR = zR * yR * 2
+        zR = modIfNecessary(zR.multiply(yR), field);
+        zR = modIfNecessary(zR.multiply(BigInteger.TWO), field);
+        
+        //compute yR = yR^2
+        yR = yR.modPow(BigInteger.TWO, field);
+        
+        //compute B = xR * yR * 4
+        bValue = modIfNecessary(xR.multiply(yR), field);
+        bValue = modIfNecessary(bValue.multiply(four), field);
+
+        //compute xR = A^2 - (2 * B)
+        xR = modIfNecessary(aValue.pow(2)
+                                .subtract(
+                                    bValue.multiply(BigInteger.TWO)
+                                )
+            , field);
+
+        //compute yR =  yR^2 * 8
+        yR = modIfNecessary(yR.modPow(BigInteger.TWO, field)
+                                .multiply(eight)
+            , field);
+
+        //compute B = (B - xR) * A
+        bValue = modIfNecessary(bValue.subtract(xR), field);
+        bValue = modIfNecessary(bValue.multiply(aValue), field);
+
+        //compute yR = B - yR
+        yR = modIfNecessary(bValue.subtract(yR), field);
+
+        return new ECProjectivePoint(xR, yR, zR);
     }
 
     /**
@@ -233,32 +279,145 @@ public class ECParametersCalculator extends ParametersCalculator
      * @param ecParams The ECParameterSpec parameters used to calculate the result
      * @return The ECPoint resulting from the operation "P + Q = R"
      */
-    public ECPoint ecFieldFpPointSum(ECPoint pPoint, ECPoint qPoint, ECParameterSpec ecParams)
+    public ECProjectivePoint ecFieldFpPointSum(ECProjectivePoint pPoint, ECProjectivePoint qPoint, ECParameterSpec ecParams)
     {
-        // BigInteger xP = pPoint.getAffineX();
-        // BigInteger yP = pPoint.getAffineY();
-        // BigInteger xQ = qPoint.getAffineX();
-        // BigInteger yQ = qPoint.getAffineY();
-        // ECParameterSpecExtractor pProv = new ECParameterSpecExtractor(ecParams);
-        // BigInteger field = pProv.getP();
-        // BigInteger two = new BigInteger("2");
+        if (pPoint.isPointToInfinity())
+        {
+            return qPoint;
+        }
+        if (qPoint.isPointToInfinity())
+        {
+            return pPoint;
+        }
+        if (pPoint.equals(qPoint))
+        {
+            return this.ecFieldFpPointDouble(qPoint, ecParams);    
+        }
 
-        // //compute s = (yQ - yP) / (xQ - xP) (mod p)
-        // BigInteger s = yQ.subtract(yP).mod(field)
-        //                 .multiply(  //multiply with the multiplicative inverse
-        //                     xQ.subtract(xP).modInverse(field)
-        //                 ).mod(field);
-        // //compute xR = s^2 - xP - xQ (mod p)
-        // BigInteger xR = s.modPow(two, field)
-        //                 .subtract(xP).mod(field)
-        //                 .subtract(xQ).mod(field);
-        // //compute yR = s*(xP - xR) - yP (mod p)    
-        // BigInteger yR = s.multiply(
-        //                     xP.subtract(xR).mod(field)
-        //                 ).mod(field)
-        //                 .subtract(yP).mod(field);
+        ECParametersExtractor ecExtractor = new ECParametersExtractor();
+        ecExtractor.extractFromECFieldFpParameterSpec(ecParams);
 
-        // return new ECPoint(xR, yR);
-        throw new UnsupportedOperationException();
+        BigInteger field = ecExtractor.getP();
+        BigInteger xR = pPoint.getProjectiveX();
+        BigInteger yR = pPoint.getProjectiveY();
+        BigInteger zR = pPoint.getProjectiveZ();
+        BigInteger aValue = qPoint.getProjectiveX();
+        BigInteger bValue = qPoint.getProjectiveY();
+        BigInteger cValue = qPoint.getProjectiveZ();
+        BigInteger vValue;
+
+        //compute V = C^2
+        vValue = cValue.modPow(BigInteger.TWO, field);
+        
+        //compute xR = xR * V
+        xR = modIfNecessary(xR.multiply(vValue), field);
+        
+        //compute V = V * C
+        vValue = modIfNecessary(vValue.multiply(cValue), field);
+        
+        //compute yR = yR * V
+        yR = modIfNecessary(yR.multiply(vValue), field);
+        
+        //compute V = zR^2
+        vValue = zR.modPow(BigInteger.TWO, field);
+        
+        //compute A = A * V
+        aValue = modIfNecessary(aValue.multiply(vValue), field);
+        
+        //compute V = zR * V
+        vValue = modIfNecessary(zR.multiply(vValue), field);
+        
+        //compute B = B * V
+        bValue = modIfNecessary(bValue.multiply(vValue), field);
+        
+        //compute A = xR - A
+        aValue = modIfNecessary(xR.subtract(aValue), field);
+        
+        //compute B = yR - B
+        bValue = modIfNecessary(yR.subtract(bValue), field);
+
+        // if (A == 0) {return pointToInfinity}
+        if (aValue.compareTo(BigInteger.ZERO) == 0) 
+        {
+            return ECProjectivePoint.POINT_AT_INFINITY;
+        }
+
+        //compute xR = (XR * 2) - A
+        xR = modIfNecessary(xR.multiply(BigInteger.TWO)
+                            .subtract(aValue)
+            , field);
+        
+        //compute yR = (yR * 2) - B
+        yR = modIfNecessary(yR.multiply(BigInteger.TWO)
+                            .subtract(bValue)
+        , field);
+        
+        //compute zR = zR * C * A
+        zR = modIfNecessary(zR.multiply(cValue), field);
+        zR = modIfNecessary(zR.multiply(aValue), field);
+        
+        //compute V = A^2
+        vValue = aValue.modPow(BigInteger.TWO, field);
+        
+        //compute A = A * V
+        aValue = modIfNecessary(aValue.multiply(vValue), field);
+        
+        //compute V = V * xR
+        vValue = modIfNecessary(vValue.multiply(xR), field);
+        
+        //compute xR = B^2
+        xR = bValue.modPow(BigInteger.TWO, field);
+        
+        //compute xR = xR - V
+        xR = modIfNecessary(xR.subtract(vValue), field);
+        
+        //compute V = V - (2 * xR)
+        vValue = modIfNecessary(vValue.subtract(
+                                    xR.multiply(BigInteger.TWO)
+                                )
+                , field);
+        
+        //compute B = B * V
+        bValue = modIfNecessary(bValue.multiply(vValue), field);
+        
+        //compute A = A * yR
+        aValue = modIfNecessary(aValue.multiply(yR), field);
+        
+        //compute yR = B - A
+        yR = modIfNecessary(bValue.subtract(aValue), field);
+        
+        //compute yR = yR / 2
+        yR = modIfNecessary(yR.multiply(BigInteger.TWO.modInverse(field)), field);
+
+        return new ECProjectivePoint(xR, yR, zR);
+    }
+
+    private ECProjectivePoint doubleAndADDPointSum(ECProjectivePoint gPoint, BigInteger n, ECParameterSpec ecParams) {
+        ECProjectivePoint result = ECProjectivePoint.POINT_AT_INFINITY;
+        ECProjectivePoint addend = gPoint.clone();
+    
+        while (n.compareTo(BigInteger.ZERO) > 0)
+        {
+            if (n.testBit(0))
+            {
+                result = ecFieldFpPointSum(result, addend, ecParams);
+            }
+            addend = ecFieldFpPointDouble(addend, ecParams);
+            n = n.shiftRight(1);
+        }
+    
+        return gPoint;
+    }
+
+    private BigInteger modIfNecessary(BigInteger value, BigInteger field)
+    {
+        if (value.compareTo(field) >= 0)
+        {
+            return value.mod(field);
+        }
+        else
+        {
+            return value;
+        }
     }
 }

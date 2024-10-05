@@ -46,7 +46,6 @@ public class BytesConsolePrinter
         {
             result += " " + String.format("%02X", bytes[i] & 0xFF);
         }
-        result += "\n";
 
         return result;
     }

@@ -57,7 +57,7 @@ public abstract class ParametersExtractor implements AlgorithmParameterSpec
      * 
      * @param params The DSAParameterSpec to extract informations from
      */
-    public abstract void extractFromParameterSpec(AlgorithmParameterSpec params);
+    public abstract void extractFromECFieldFpParameterSpec(AlgorithmParameterSpec params);
 
     //setters    
     public void setP(BigInteger p)
