@@ -1,5 +1,5 @@
-DSAAndECDSAImplementations/C/src/oryx/oryxDsaMain.exe
-DSAAndECDSAImplementations/C/src/oryx/oryxEcdsaMain.exe
+DSAAndECDSAImplementations/C/src/examples/oryxDsaMain.exe
+DSAAndECDSAImplementations/C/src/examples/oryxEcdsaMain.exe
 DSAAndECDSAImplementations/C/src/test.c
 DSAAndECDSAImplementations/C/src/test.exe
 DSAAndECDSAImplementations/Java/src/Test.java
