@@ -7,15 +7,14 @@ import DSAAndECDSAImplementations.Java.libraries.NativeDS.parameters.calculation
 
 public class ECPointConsolePrinter
 {
-    BytesConsolePrinter bytesPrinter = new BytesConsolePrinter();
 
     public String ecPointToString(ECPoint p)
     {
         BigInteger x = p.getAffineX();
         BigInteger y = p.getAffineY();
         
-        return ("(" + bytesPrinter.byteArrayToString(x.toByteArray()) + ", " +
-                bytesPrinter.byteArrayToString(y.toByteArray()) + ")");
+        return ("(" + x.toString() + ", " +
+                y.toString() + ")");
     }
 
     public String ecPointToString(ECProjectivePoint p)
@@ -24,8 +23,8 @@ public class ECPointConsolePrinter
         BigInteger y = p.getProjectiveY();
         BigInteger z = p.getProjectiveZ();
 
-        return ("(" + bytesPrinter.byteArrayToString(x.toByteArray()) + ", " +
-                    bytesPrinter.byteArrayToString(y.toByteArray()) + ", " +
-                    bytesPrinter.byteArrayToString(z.toByteArray()) + ")");
+        return ("(" + x.toString() + ", " +
+                    y.toString() + ", " +
+                    z.toString() + ")");
     }
 }

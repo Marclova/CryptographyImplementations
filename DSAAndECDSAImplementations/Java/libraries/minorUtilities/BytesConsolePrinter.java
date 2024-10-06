@@ -24,39 +24,22 @@
 
 package DSAAndECDSAImplementations.Java.libraries.minorUtilities;
 
+import java.math.BigInteger;
+
 public class BytesConsolePrinter
 {
     public String byteArrayToString(byte[] bytes)
     {
         if (bytes.length > 8)
         {
-            return this.byteArrayToStringAsHex(bytes);
+            return new BigInteger(bytes).toString();
         }
         
         return this.byteArrayToStringAsDecimal(bytes);
     }
-    
-    public String byteArrayToStringAsHex(byte[] bytes)
+
+    private String byteArrayToStringAsDecimal(byte[] bytes)
     {
-        String result = new String();
-
-        result += String.format("%02X", bytes[0] & 0xFF);
-
-        for (int i = 1; i < bytes.length; i++)
-        {
-            result += " " + String.format("%02X", bytes[i] & 0xFF);
-        }
-
-        return result;
-    }
-
-    public String byteArrayToStringAsDecimal(byte[] bytes)
-    {
-        if (bytes.length > 8)
-        {
-            throw new IllegalArgumentException("Value too high");    
-        }
-
         long value = 0;
         for (int i = 0; i < bytes.length; i++) {
             value <<= 8;

@@ -65,7 +65,7 @@ public class CustomParametersMain {
         ParametersExtractor extractor;
 
         //#region choosing algorithm
-        short choice = 2;
+        short choice = 1;
         switch (choice) {
             case 1:
                 KeyPairGeneratorAlgorithmName = "DSA";
@@ -125,8 +125,8 @@ public class CustomParametersMain {
 
         if (gValue instanceof BigInteger)
         {
-            gStringValue = bytePrinter.byteArrayToString(((BigInteger) gValue).toByteArray());
-            yStringValue = bytePrinter.byteArrayToString(((BigInteger) yValue).toByteArray());
+            gStringValue = ((BigInteger) gValue).toString();
+            yStringValue = ((BigInteger) yValue).toString();
         }
         else
         {
@@ -137,10 +137,10 @@ public class CustomParametersMain {
         System.out.println("\nSelected algorithm: " + KeyPairGeneratorAlgorithmName + "\n");
         
         System.out.println("selected 'p' module:\n" +
-                            bytePrinter.byteArrayToString(pValue.toByteArray()) + "\n");
+                            pValue + "\n");
         
         System.out.println("selected 'q' module:\n" +
-        bytePrinter.byteArrayToString(qValue.toByteArray()) + "\n");
+        qValue + "\n");
 
         System.out.println("calculated 'g' generator:\n" +
                             gStringValue + "\n");
